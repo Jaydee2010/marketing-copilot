@@ -61,6 +61,16 @@ app.get('/api/status', (req, res) => {
   });
 });
 
+// Vercel Cron or External Webhook Trigger
+app.all('/api/cron', async (req, res) => {
+  try {
+    await scheduler.tick();
+    res.json({ ok: true, timestamp: new Date().toISOString(), message: 'Scheduler tick executed' });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Marketing Strategy
 app.get('/api/strategy', (req, res) => {
   res.json(db.getStrategy());
