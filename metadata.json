@@ -1,0 +1,6 @@
+{
+  "name": "Garage Door AI Marketing Autopilot",
+  "description": "Private marketing automation cockpit for AI voice agents targeting US garage door companies on LinkedIn and Instagram.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
