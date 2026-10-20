@@ -49,6 +49,19 @@ export default function App() {
   const loadAllData = async () => {
     try {
       setLoading(true);
+      const fetchJson = async (url: string) => {
+        const res = await fetch(url);
+        const text = await res.text();
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${text.slice(0, 100)}`);
+        }
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          throw new Error(`Expected JSON from ${url} but received HTML/Text ("${text.slice(0, 50)}..."). The backend API server may not be running or the route is not configured.`);
+        }
+      };
+
       const [
         statusRes,
         campaignsRes,
@@ -59,14 +72,14 @@ export default function App() {
         logsRes,
         usageRes,
       ] = await Promise.all([
-        fetch('/api/status').then((r) => r.json()),
-        fetch('/api/campaigns').then((r) => r.json()),
-        fetch('/api/strategy').then((r) => r.json()),
-        fetch('/api/schedule').then((r) => r.json()),
-        fetch('/api/integrations/linkedin').then((r) => r.json()),
-        fetch('/api/integrations/instagram').then((r) => r.json()),
-        fetch('/api/logs').then((r) => r.json()),
-        fetch('/api/usage').then((r) => r.json()),
+        fetchJson('/api/status'),
+        fetchJson('/api/campaigns'),
+        fetchJson('/api/strategy'),
+        fetchJson('/api/schedule'),
+        fetchJson('/api/integrations/linkedin'),
+        fetchJson('/api/integrations/instagram'),
+        fetchJson('/api/logs'),
+        fetchJson('/api/usage'),
       ]);
 
       setStatus(statusRes);

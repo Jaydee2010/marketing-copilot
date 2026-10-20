@@ -14,7 +14,9 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const ASSETS_DIR = path.resolve(process.cwd(), 'data', 'assets');
+const ASSETS_DIR = process.env.VERCEL
+  ? path.resolve('/tmp', 'data', 'assets')
+  : path.resolve(process.cwd(), 'data', 'assets');
 
 if (!fs.existsSync(ASSETS_DIR)) {
   fs.mkdirSync(ASSETS_DIR, { recursive: true });
@@ -349,6 +351,10 @@ async function startServer() {
   });
 }
 
-startServer().catch((err) => {
-  console.error('[Autopilot Server] Startup failed:', err);
-});
+export default app;
+
+if (!process.env.VERCEL) {
+  startServer().catch((err) => {
+    console.error('[Autopilot Server] Startup failed:', err);
+  });
+}

@@ -4,7 +4,9 @@ import sharp from 'sharp';
 import { Campaign, Slide, SlideFormat, SlideTheme, RenderedSlideAsset } from '../src/types/index';
 import { db } from './db';
 
-const ASSETS_DIR = path.resolve(process.cwd(), 'data', 'assets');
+const ASSETS_DIR = process.env.VERCEL
+  ? path.resolve('/tmp', 'data', 'assets')
+  : path.resolve(process.cwd(), 'data', 'assets');
 
 function escapeXml(unsafe: string): string {
   if (!unsafe) return '';

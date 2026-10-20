@@ -11,7 +11,9 @@ import {
   ContentPillar,
 } from '../src/types/index';
 
-const DATA_DIR = path.resolve(process.cwd(), 'data');
+const DATA_DIR = process.env.VERCEL
+  ? path.resolve('/tmp', 'data')
+  : path.resolve(process.cwd(), 'data');
 const ASSETS_DIR = path.resolve(DATA_DIR, 'assets');
 const DB_FILE = path.resolve(DATA_DIR, 'database.json');
 
