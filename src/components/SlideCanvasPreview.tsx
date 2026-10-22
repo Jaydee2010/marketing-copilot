@@ -80,6 +80,27 @@ export const SlideCanvasPreview: React.FC<SlideCanvasPreviewProps> = ({
       accentBg: 'bg-blue-500',
       cardBg: 'bg-slate-900/80 border-slate-700/60',
       highlightBox: 'bg-blue-950/40 border-blue-500/50',
+      glowColor: 'bg-blue-500/10',
+    },
+    'midnight-crimson': {
+      bg: 'from-black via-slate-950 to-red-950/40',
+      border: 'border-red-500/40',
+      badgeBg: 'bg-red-500/15 border-red-500/40 text-red-400',
+      accentText: 'text-red-400',
+      accentBg: 'bg-red-500',
+      cardBg: 'bg-slate-950/80 border-red-900/40',
+      highlightBox: 'bg-red-950/40 border-red-500/50',
+      glowColor: 'bg-red-500/15',
+    },
+    'industrial-copper': {
+      bg: 'from-stone-950 via-slate-950 to-orange-950/40',
+      border: 'border-orange-500/40',
+      badgeBg: 'bg-orange-500/15 border-orange-500/40 text-orange-400',
+      accentText: 'text-orange-400',
+      accentBg: 'bg-orange-500',
+      cardBg: 'bg-stone-950/80 border-stone-800/60',
+      highlightBox: 'bg-orange-950/40 border-orange-500/50',
+      glowColor: 'bg-orange-500/12',
     },
   }[theme] || {
     bg: 'from-slate-950 via-slate-900 to-blue-950/40',
@@ -89,6 +110,7 @@ export const SlideCanvasPreview: React.FC<SlideCanvasPreviewProps> = ({
     accentBg: 'bg-blue-500',
     cardBg: 'bg-slate-900/80 border-slate-700/60',
     highlightBox: 'bg-blue-950/40 border-blue-500/50',
+    glowColor: 'bg-blue-500/10',
   };
 
   const isPortrait = format === 'portrait_4_5';
@@ -164,6 +186,22 @@ export const SlideCanvasPreview: React.FC<SlideCanvasPreviewProps> = ({
     }
   };
 
+  const cleanLabel = (() => {
+    const raw = (slide.supportingLabel || '').toUpperCase();
+    if (raw.includes('SCENE 01') || raw.includes('HOOK')) return 'FIELD REALITY';
+    if (raw.includes('SCENE 02') || raw.includes('REALITY')) return 'EMERGENCY DISPATCH';
+    if (raw.includes('SCENE 03') || raw.includes('CONSEQUENCE')) return 'REVENUE LEAK';
+    if (raw.includes('SCENE 04') || raw.includes('INSIGHT')) return 'CONTRACTOR MATH';
+    if (raw.includes('SCENE 05') || raw.includes('PROCESS')) return 'AI CALL INTAKE';
+    if (raw.includes('SCENE 06') || raw.includes('OUTCOME')) return 'OWNER FREEDOM';
+    if (raw.includes('SCENE 07') || raw.includes('NEXT STEP') || raw.includes('CTA')) return 'TAKE ACTION';
+    return (slide.supportingLabel || '').replace(/scene\s*\d+\s*(\/\/|:|-)\s*/gi, '').trim() || 'TRADE REALITY';
+  })();
+
+  const cleanHeadline = (slide.headline || '')
+    .replace(/^(the real-life moment|the consequence|the business insight|the practical process change|the practical change|the outcome|the hook|hook|consequence):\s*/i, '')
+    .trim();
+
   return (
     <div
       className={`relative w-full overflow-hidden rounded-xl border ${themeStyles.border} bg-gradient-to-b ${themeStyles.bg} shadow-2xl transition-all duration-300 flex flex-col justify-between`}
@@ -171,18 +209,23 @@ export const SlideCanvasPreview: React.FC<SlideCanvasPreviewProps> = ({
         aspectRatio: isPortrait ? '4 / 5' : '1 / 1',
       }}
     >
-      {/* Background subtle technical grid */}
+      {/* Background subtle technical grid / texture tailored per theme */}
       <div
         className="absolute inset-0 opacity-10 pointer-events-none"
         style={{
-          backgroundImage: `radial-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px)`,
-          backgroundSize: '24px 24px',
+          backgroundImage:
+            theme === 'garage-amber'
+              ? 'repeating-linear-gradient(45deg, rgba(245, 158, 11, 0.25) 0, rgba(245, 158, 11, 0.25) 10px, transparent 0, transparent 20px)'
+              : theme === 'midnight-crimson'
+              ? 'radial-gradient(circle at center, rgba(239, 68, 68, 0.3) 0%, transparent 70%)'
+              : 'radial-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px)',
+          backgroundSize: theme === 'garage-amber' ? '28px 28px' : '24px 24px',
         }}
       />
 
       {/* Decorative top ambient glow */}
-      <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -left-24 w-64 h-64 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
+      <div className={`absolute -top-24 -right-24 w-64 h-64 rounded-full ${themeStyles.glowColor || 'bg-blue-500/10'} blur-3xl pointer-events-none`} />
+      <div className="absolute -bottom-24 -left-24 w-64 h-64 rounded-full bg-slate-500/10 blur-3xl pointer-events-none" />
 
       {/* Slide Header */}
       <div className="relative z-10 p-6 md:p-8 flex items-center justify-between border-b border-white/5">
@@ -212,13 +255,13 @@ export const SlideCanvasPreview: React.FC<SlideCanvasPreviewProps> = ({
         <div className="mb-3">
           <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-md border text-[11px] font-bold tracking-wider uppercase ${themeStyles.badgeBg}`}>
             <span className={`w-1.5 h-1.5 rounded-full ${themeStyles.accentBg}`} />
-            {slide.supportingLabel}
+            {cleanLabel}
           </span>
         </div>
 
         {/* Headline */}
         <h2 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-white tracking-tight leading-snug mb-3">
-          {slide.headline}
+          {cleanHeadline}
         </h2>
 
         {/* Subtitle / Body Copy */}

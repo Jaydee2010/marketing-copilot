@@ -183,6 +183,7 @@ export default function App() {
     customTopic?: string;
     theme: SlideTheme;
     targetSlot: string;
+    hasJoke?: boolean;
   }) => {
     try {
       setActionLoading(true);

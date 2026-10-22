@@ -99,6 +99,36 @@ function getThemePalette(theme: SlideTheme): ThemePalette {
         highlightBg: '#059669',
         highlightText: '#ffffff',
       };
+    case 'midnight-crimson':
+      return {
+        bgGradientStart: '#1b0808',
+        bgGradientEnd: '#0a0303',
+        cardBg: '#2c0f0f',
+        cardBorder: '#ef4444',
+        accent: '#ef4444',
+        accentGlow: 'rgba(239, 68, 68, 0.28)',
+        textPrimary: '#ffffff',
+        textSecondary: '#fca5a5',
+        badgeBg: 'rgba(239, 68, 68, 0.18)',
+        badgeText: '#f87171',
+        highlightBg: '#b91c1c',
+        highlightText: '#ffffff',
+      };
+    case 'industrial-copper':
+      return {
+        bgGradientStart: '#1c1108',
+        bgGradientEnd: '#0d0703',
+        cardBg: '#2e1c0e',
+        cardBorder: '#ea580c',
+        accent: '#f97316',
+        accentGlow: 'rgba(249, 115, 22, 0.25)',
+        textPrimary: '#ffffff',
+        textSecondary: '#fdba74',
+        badgeBg: 'rgba(249, 115, 22, 0.18)',
+        badgeText: '#fb923c',
+        highlightBg: '#c2410c',
+        highlightText: '#ffffff',
+      };
     case 'modern-navy':
     default:
       return {
@@ -133,11 +163,20 @@ export function generateSlideSvg(
   const headlineLines = wrapText(slide.headline, 28);
   const bodyLines = wrapText(slide.bodyText, 40);
 
-  // Background grid pattern and decorative accent graphics
-  const gridPattern = `
+  // Background grid and theme-specific decorative styling
+  const patternDefs = `
     <defs>
+      <!-- Standard blueprint/technical grid -->
       <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="1"/>
+        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.035)" stroke-width="1"/>
+      </pattern>
+      <!-- Industrial caution diagonal stripes for garage-amber -->
+      <pattern id="stripes" width="40" height="40" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+        <line x1="0" y1="0" x2="0" y2="40" stroke="rgba(245, 158, 11, 0.04)" stroke-width="8" />
+      </pattern>
+      <!-- Technical dot matrix for emerald / crimson -->
+      <pattern id="dots" width="30" height="30" patternUnits="userSpaceOnUse">
+        <circle cx="2" cy="2" r="1.5" fill="rgba(255, 255, 255, 0.04)"/>
       </pattern>
       <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="${palette.bgGradientStart}"/>
@@ -153,9 +192,9 @@ export function generateSlideSvg(
       </filter>
     </defs>
     <rect width="${width}" height="${height}" fill="url(#bgGrad)"/>
-    <rect width="${width}" height="${height}" fill="url(#grid)"/>
-    <circle cx="${width - 100}" cy="100" r="300" fill="${palette.accentGlow}" filter="url(#glow)"/>
-    <circle cx="100" cy="${height - 100}" r="250" fill="${palette.accentGlow}" filter="url(#glow)"/>
+    <rect width="${width}" height="${height}" fill="${theme === 'garage-amber' ? 'url(#stripes)' : theme === 'emerald-minimal' || theme === 'midnight-crimson' ? 'url(#dots)' : 'url(#grid)'}"/>
+    <circle cx="${width - 100}" cy="100" r="320" fill="${palette.accentGlow}" filter="url(#glow)"/>
+    <circle cx="100" cy="${height - 100}" r="280" fill="${palette.accentGlow}" filter="url(#glow)"/>
   `;
 
   // Header Bar (Brand & Slide Indicator)
@@ -310,7 +349,7 @@ export function generateSlideSvg(
 
   return `
     <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-      ${gridPattern}
+      ${patternDefs}
       ${header}
       ${badge}
       ${headlineSvg}

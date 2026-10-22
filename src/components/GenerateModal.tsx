@@ -12,6 +12,7 @@ interface GenerateModalProps {
     customTopic?: string;
     theme: SlideTheme;
     targetSlot: string;
+    hasJoke?: boolean;
   }) => Promise<void>;
   pillars: ContentPillar[];
   dailySlots: string[];
@@ -32,6 +33,7 @@ export const GenerateModal: React.FC<GenerateModalProps> = ({
   const [customTopic, setCustomTopic] = useState('');
   const [theme, setTheme] = useState<SlideTheme>('garage-amber');
   const [targetSlot, setTargetSlot] = useState(dailySlots[0] || '08:15');
+  const [hasJoke, setHasJoke] = useState(false);
 
   if (!isOpen) return null;
 
@@ -44,6 +46,7 @@ export const GenerateModal: React.FC<GenerateModalProps> = ({
       customTopic: customTopic.trim() || undefined,
       theme,
       targetSlot,
+      hasJoke,
     });
     onClose();
   };
@@ -170,9 +173,11 @@ export const GenerateModal: React.FC<GenerateModalProps> = ({
                 className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:outline-none focus:border-amber-500"
               >
                 <option value="garage-amber">High-Visibility Garage Amber</option>
-                <option value="modern-navy">Modern Tech Navy</option>
                 <option value="precision-blueprint">Precision Blueprint</option>
+                <option value="midnight-crimson">Emergency Midnight Crimson</option>
+                <option value="modern-navy">Modern Tech Navy</option>
                 <option value="emerald-minimal">Clean Emerald Minimal</option>
+                <option value="industrial-copper">Industrial Cast-Iron Copper</option>
               </select>
             </div>
 
@@ -190,6 +195,24 @@ export const GenerateModal: React.FC<GenerateModalProps> = ({
                 ))}
               </select>
             </div>
+          </div>
+
+          {/* Trade Humor Option */}
+          <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+            <div className="space-y-0.5">
+              <span className="text-xs font-bold text-white block">
+                Include Relatable Garage Door Humor
+              </span>
+              <span className="text-[11px] text-slate-400 block">
+                Opens with a relatable contractor joke (e.g. spring snapping only when late for flights), then flows into the AI voice agent & CTA. (2 posts/day recommended).
+              </span>
+            </div>
+            <input
+              type="checkbox"
+              checked={hasJoke}
+              onChange={(e) => setHasJoke(e.target.checked)}
+              className="w-4 h-4 rounded text-amber-500 focus:ring-amber-400 focus:ring-offset-slate-900 border-slate-700 bg-slate-900 cursor-pointer"
+            />
           </div>
 
           {/* Footer Actions */}

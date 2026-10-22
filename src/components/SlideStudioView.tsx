@@ -190,7 +190,7 @@ export const SlideStudioView: React.FC<SlideStudioViewProps> = ({
           {/* Theme Selector */}
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs">
             <span className="text-slate-400 text-[11px] font-semibold">Theme:</span>
-            {(['garage-amber', 'modern-navy', 'precision-blueprint', 'emerald-minimal'] as SlideTheme[]).map((th) => (
+            {(['garage-amber', 'precision-blueprint', 'midnight-crimson', 'modern-navy', 'emerald-minimal', 'industrial-copper'] as SlideTheme[]).map((th) => (
               <button
                 key={th}
                 onClick={() => handleThemeChange(th)}
@@ -199,11 +199,15 @@ export const SlideStudioView: React.FC<SlideStudioViewProps> = ({
                 } ${
                   th === 'garage-amber'
                     ? 'bg-amber-500 border-amber-400'
-                    : th === 'modern-navy'
-                    ? 'bg-blue-600 border-blue-400'
                     : th === 'precision-blueprint'
                     ? 'bg-sky-400 border-sky-300'
-                    : 'bg-emerald-500 border-emerald-400'
+                    : th === 'midnight-crimson'
+                    ? 'bg-red-600 border-red-400'
+                    : th === 'modern-navy'
+                    ? 'bg-blue-600 border-blue-400'
+                    : th === 'emerald-minimal'
+                    ? 'bg-emerald-500 border-emerald-400'
+                    : 'bg-orange-500 border-orange-400'
                 }`}
                 title={th}
               />

@@ -63,7 +63,13 @@ export interface Slide {
 }
 
 export type SlideFormat = 'portrait_4_5' | 'square_1_1';
-export type SlideTheme = 'modern-navy' | 'garage-amber' | 'precision-blueprint' | 'emerald-minimal';
+export type SlideTheme =
+  | 'modern-navy'
+  | 'garage-amber'
+  | 'precision-blueprint'
+  | 'emerald-minimal'
+  | 'midnight-crimson'
+  | 'industrial-copper';
 
 export interface PlatformPostConfig {
   enabled: boolean;
@@ -98,6 +104,7 @@ export interface Campaign {
   objective: string;
   contentAngleExplanation: string;
   theme: SlideTheme;
+  hasJoke?: boolean;
   scheduledTime: string; // ISO date string or HH:mm slot
   slides: Slide[]; // Exactly 7 slides
   platforms: {

@@ -58,6 +58,48 @@ interface GenerateCampaignParams {
   customTopic?: string;
   theme?: SlideTheme;
   targetSlot?: string; // e.g. "08:15"
+  hasJoke?: boolean;
+}
+
+/**
+ * Strips internal structural prefixes (Scene 01, The Hook, The Consequence, etc.)
+ * and converts them to professional trade contractor category badges.
+ */
+export function cleanSlideMetaLabels(rawLabel: string, slideNum: number, hasJoke = false): string {
+  if (!rawLabel) return hasJoke && slideNum === 1 ? 'TRADE HUMOR' : 'FIELD REALITY';
+  const upper = rawLabel.toUpperCase();
+  if (upper.includes('SCENE 01') || upper.includes('THE HOOK') || upper.includes('HOOK')) {
+    return hasJoke ? 'TRADE HUMOR' : 'FIELD REALITY';
+  }
+  if (upper.includes('SCENE 02') || upper.includes('REALITY') || upper.includes('REAL-LIFE')) {
+    return 'EMERGENCY DISPATCH';
+  }
+  if (upper.includes('SCENE 03') || upper.includes('CONSEQUENCE')) {
+    return 'REVENUE LEAK';
+  }
+  if (upper.includes('SCENE 04') || upper.includes('INSIGHT')) {
+    return 'CONTRACTOR MATH';
+  }
+  if (upper.includes('SCENE 05') || upper.includes('PROCESS')) {
+    return 'AI CALL INTAKE';
+  }
+  if (upper.includes('SCENE 06') || upper.includes('OUTCOME')) {
+    return 'OWNER FREEDOM';
+  }
+  if (upper.includes('SCENE 07') || upper.includes('NEXT STEP') || upper.includes('CTA')) {
+    return 'TAKE ACTION';
+  }
+  return rawLabel.replace(/scene\s*\d+\s*(\/\/|:|-)\s*/gi, '').trim() || 'TRADE REALITY';
+}
+
+/**
+ * Strips accidental internal outline prefixes like "The Real-Life Moment: " or "The Consequence: "
+ */
+export function cleanHeadlinePrefixes(rawHeadline: string): string {
+  if (!rawHeadline) return '';
+  return rawHeadline
+    .replace(/^(the real-life moment|the consequence|the business insight|the practical process change|the practical change|the owner's outcome|the outcome|the hook|hook|consequence):\s*/i, '')
+    .trim();
 }
 
 // Bounded exponential backoff retry helper
@@ -200,6 +242,27 @@ Required wording: "${APPROVED_ALTERNATIVE_CTAS.demo_cta.copy}"`
     : `CALL TO ACTION: Invite direct conversation on missed calls.
 Required wording: "${APPROVED_ALTERNATIVE_CTAS.dm_conversation.copy}"`;
 
+  const hasJoke = params.hasJoke ?? false;
+
+  const jokeGuidance = hasJoke
+    ? `
+*** SPECIAL REQUIREMENT: RELATABLE GARAGE DOOR TRADE CONTRACTOR HUMOR ***
+- This post MUST open with a genuinely funny, relatable garage door trade joke or universal trade reality that every garage door business owner nods and laughs at!
+- Examples of relatable trade humor:
+  * "The Universal Law of Torsion Springs: They only snap at 6:45 AM on a Monday when the homeowner has an early flight, or 11:30 PM in a blizzard. Never at 2 PM on a slow Tuesday."
+  * "Homeowner: 'I swear it just stopped working on its own!' *Panel 1 has a dent the exact size and shape of an F-150 bumper.*"
+  * "Things that always happen at 11:47 PM on a freezing Sunday: LiftMaster logic boards going on strike."
+  * "DIY Homeowner: 'How hard could winding a spring be? YouTube makes it look so quick.' *Narrator: It was not quick.*"
+  * "Emergency call at 10 PM: 'Can you come right now? It's an emergency!' / Tech: 'What's the issue?' / Homeowner: 'The remote battery might be dead.'"
+- Slide 1: Deliver the relatable trade joke / scene.
+- Slide 2: Deepen the trade humor with realistic shop/van/ladder moments.
+- Slide 3: Hit the financial punchline: While you're chuckling or handling that ridiculous scenario with tools in both hands, your phone rings in your pocket. You can't answer. That missed call was a real $450 emergency replacement across town—and they called your competitor 90 seconds later.
+- Slide 4: Business insight: Humor keeps contractors sane, but missed calls drain revenue.
+- Slide 5: Practical solution: Quiet AI voice triage answers on ring 2, weeds out the tire kickers, captures the real job, and alerts the tech.
+- Slide 6: Peace of mind: Real jobs captured, zero interrupted dinners, no evening phone tag.
+- Slide 7: Flows directly into assigned CTA (${ctaType}).`
+    : '';
+
   const systemInstruction = `You are a B2B marketing specialist who intimately understands the daily operational realities of running an independent garage door repair and installation company in the United States.
 
 CORE POSITIONING:
@@ -211,17 +274,25 @@ CORE POSITIONING:
 - Tone: Natural, direct, conversational American trade contractor English. Write for busy small-business owners, not tech enthusiasts.
 - HONESTY RULE: Never fabricate or promise guaranteed recovered revenue, guaranteed bookings, or savings. Use honest phrasing like "could help", "find out", "see what", and "try the demo".
 
+CRITICAL RULE REGARDING HEADLINES AND LABELS:
+- Do NOT output meta labels, scene labels, or internal outline placeholders on the slides!
+- FORBIDDEN HEADLINES: "The Real-Life Moment", "The Consequence", "The Business Insight", "The Practical Process Change", "The Practical Change", "The Owner's Outcome", "The Hook".
+- FORBIDDEN SUPPORTING LABELS: "SCENE 01 // THE HOOK", "SCENE 02 // REALITY", "SCENE 03 // CONSEQUENCE", "SCENE 04 // INSIGHT", "SCENE 05 // THE PROCESS", "SCENE 06 // OUTCOME", "SCENE 07 // NEXT STEP", or anything starting with "SCENE".
+- INSTEAD, write REAL trade headlines (e.g. "Dave Was Balanced 10ft Up on a Ladder", "A Trapped Minivan & A Snapped Spring", "She Didn't Leave a Voicemail", "Lead Gen Won't Fix an Empty Phone", "The 2-Ring Call Dispatch Workflow", "Zero Interrupted Sunday Dinners").
+- For supportingLabel, use trade category badges: "FIELD REALITY", "EMERGENCY DISPATCH", "REVENUE LEAK", "CONTRACTOR MATH", "AI CALL INTAKE", "OWNER FREEDOM", "TAKE ACTION", or "TRADE HUMOR".
+
 BUYING MOTIVATION FOR THIS POST:
 ${motivationGuidance}
+${jokeGuidance}
 
 SEVEN-SLIDE NARRATIVE STRUCTURE (EXACTLY 7 SLIDES):
-- Slide 1 — The hook: Specific trade scene, recognizable frustration, or surprising question (e.g. "Dave was halfway through a spring replacement when his phone rang").
-- Slide 2 — The real-life moment: What the tech, owner, or homeowner is doing (holding winding bars, customer panicked with car trapped inside).
-- Slide 3 — The consequence: Customer dials competitor, enquiry goes cold, or family dinner is interrupted. (Do not claim a lost job definitely occurred unless illustrative).
-- Slide 4 — The business insight: Lead generation doesn't fix a call-handling bottleneck; owner's time is finite.
-- Slide 5 — The practical change: How call handling quietly answers on ring 2, collects door specs/issue/address, quotes standard fee ranges, and alerts technician.
-- Slide 6 — The owner's outcome: Time back, fewer interruptions, recovered revenue, dinner with family.
-- Slide 7 — The call to action:
+- Slide 1: Bold hook headline & scene (or relatable trade joke if specified)
+- Slide 2: Real-life job moment (on ladder, emergency car trapped, customer urgency)
+- Slide 3: The consequence (customer dials competitor, dinner interrupted)
+- Slide 4: The business insight (bottleneck is call-handling, not ad clicks)
+- Slide 5: The practical change (answers on ring 2, collects door specs, alerts tech)
+- Slide 6: The owner's outcome (jobs booked, zero phone tag, time with family)
+- Slide 7: The call to action:
 ${ctaGuidance}
 `;
 
@@ -230,11 +301,12 @@ ${ctaGuidance}
 Content Pillar: ${selectedPillar.title} (${selectedPillar.description})
 Primary Buying Motivation: ${buyingMotivation}
 Assigned CTA Type: ${ctaType}
+${hasJoke ? 'INCLUDE RELATABLE GARAGE DOOR TRADE HUMOR AS INSTRUCTED.' : ''}
 ${params.customTopic ? `Specific Topic Angle: ${params.customTopic}` : ''}
 
 You MUST return a JSON object with this EXACT structure:
 {
-  "title": "Campaign headline (focus on garage door problem or scene)",
+  "title": "Campaign headline (focus on garage door problem, scene, or trade humor)",
   "targetAudience": "US Garage Door Repair and Installation Owners",
   "objective": "Primary marketing goal",
   "contentAngleExplanation": "1-2 sentence explanation of the trade scenario",
@@ -245,9 +317,9 @@ You MUST return a JSON object with this EXACT structure:
   "slides": [
     {
       "slideNumber": 1,
-      "headline": "Bold Hook Headline (max 8 words)",
+      "headline": "${hasJoke ? 'The Universal Law of Broken Springs' : 'Dave Was Balanced 10ft Up on a Ladder'}",
       "bodyText": "1-2 punchy sentences describing the opening scene (max 25 words)",
-      "supportingLabel": "SCENE 01 // THE HOOK",
+      "supportingLabel": "${hasJoke ? 'TRADE HUMOR' : 'FIELD REALITY'}",
       "layoutType": "hook_title",
       "icon": "wrench",
       "visualInstruction": "Visual guidance for trade scene",
@@ -255,18 +327,18 @@ You MUST return a JSON object with this EXACT structure:
     },
     {
       "slideNumber": 2,
-      "headline": "The Real-Life Moment",
+      "headline": "A Trapped Minivan & A Loud Gunshot Bang",
       "bodyText": "Details of the repair, dispatch, or customer situation",
-      "supportingLabel": "SCENE 02 // REALITY",
+      "supportingLabel": "EMERGENCY DISPATCH",
       "layoutType": "problem_stat",
       "icon": "alert-triangle",
       "bulletPoints": ["point 1", "point 2", "point 3"]
     },
     {
       "slideNumber": 3,
-      "headline": "The Consequence",
+      "headline": "She Tapped The Competitor in 90 Seconds",
       "bodyText": "Customer calls competitor or dinner interrupted",
-      "supportingLabel": "SCENE 03 // CONSEQUENCE",
+      "supportingLabel": "REVENUE LEAK",
       "layoutType": "breakdown_list",
       "icon": "phone-missed",
       "highlightMetric": { "value": "$350", "label": "Lost ticket opportunity" },
@@ -274,27 +346,27 @@ You MUST return a JSON object with this EXACT structure:
     },
     {
       "slideNumber": 4,
-      "headline": "The Business Insight",
+      "headline": "More Google Ads Won't Fix an Empty Phone",
       "bodyText": "Why more advertising doesn't fix a broken intake bucket",
-      "supportingLabel": "SCENE 04 // INSIGHT",
+      "supportingLabel": "CONTRACTOR MATH",
       "layoutType": "solution_feature",
       "icon": "trending-up",
       "bulletPoints": ["point 1", "point 2"]
     },
     {
       "slideNumber": 5,
-      "headline": "The Practical Process Change",
+      "headline": "The 2-Ring Dispatch & Triage System",
       "bodyText": "Answering on ring 2, collecting door specs, SMS alert to tech",
-      "supportingLabel": "SCENE 05 // THE PROCESS",
+      "supportingLabel": "AI CALL INTAKE",
       "layoutType": "call_flow",
       "icon": "bot",
       "bulletPoints": ["Step 1", "Step 2", "Step 3"]
     },
     {
       "slideNumber": 6,
-      "headline": "The Owner's Outcome",
+      "headline": "The Job Was Booked Before The Ladder Moved",
       "bodyText": "Recovered jobs, dinner with family, no evening phone tag",
-      "supportingLabel": "SCENE 06 // OUTCOME",
+      "supportingLabel": "OWNER FREEDOM",
       "layoutType": "metrics_grid",
       "icon": "shield-check",
       "highlightMetric": { "value": "0", "label": "Voicemails waiting at 5:30" },
@@ -304,7 +376,7 @@ You MUST return a JSON object with this EXACT structure:
       "slideNumber": 7,
       "headline": "${ctaSpec.slideHeadline}",
       "bodyText": "${ctaSpec.slideBody}",
-      "supportingLabel": "SCENE 07 // NEXT STEP",
+      "supportingLabel": "TAKE ACTION",
       "layoutType": "cta_action",
       "icon": "${ctaType === 'calculator' ? 'dollar-sign' : ctaType === 'demo_cta' ? 'phone-call' : 'message-square'}",
       "highlightMetric": { "value": "${ctaSpec.slideMetric.value}", "label": "${ctaSpec.slideMetric.label}" }
@@ -394,11 +466,14 @@ You MUST return a JSON object with this EXACT structure:
       }
     }
 
+    const cleanLabel = cleanSlideMetaLabels(s.supportingLabel, slideNumber, hasJoke);
+    const cleanHeadline = cleanHeadlinePrefixes(sanitizeHypeClaims(headline));
+
     return {
       slideNumber,
-      headline: sanitizeHypeClaims(headline),
+      headline: cleanHeadline,
       bodyText: sanitizeHypeClaims(bodyText),
-      supportingLabel: s.supportingLabel || `SCENE 0${slideNumber}`,
+      supportingLabel: cleanLabel,
       layoutType: s.layoutType || (idx === 0 ? 'hook_title' : isSlide7 ? 'cta_action' : 'solution_feature'),
       icon: s.icon || (isSlide7 ? (ctaType === 'calculator' ? 'dollar-sign' : ctaType === 'demo_cta' ? 'phone-call' : 'message-square') : 'check-circle'),
       visualInstruction: s.visualInstruction || '',
@@ -480,6 +555,7 @@ export function getDailyPlanForDay(dayOfWeek: number = new Date().getDay()): Arr
   ctaType: CtaType;
   theme: SlideTheme;
   slot: string;
+  hasJoke: boolean;
 }> {
   // Weekly pairing of the 2 alternative CTAs (never the same on the same day)
   // Options: 'dm_calculator', 'demo_cta', 'dm_conversation'
@@ -495,34 +571,55 @@ export function getDailyPlanForDay(dayOfWeek: number = new Date().getDay()): Arr
 
   const [alt1, alt2] = alternativePairs[dayOfWeek % alternativePairs.length];
 
+  // Rotate through 6 distinct color themes so no 2 posts in a day ever share a color
+  const themeRoster: SlideTheme[] = [
+    'garage-amber',
+    'precision-blueprint',
+    'midnight-crimson',
+    'modern-navy',
+    'emerald-minimal',
+    'industrial-copper',
+  ];
+
+  // Rotate starting offset daily
+  const offset = (dayOfWeek * 2) % themeRoster.length;
+  const themeSlot1 = themeRoster[offset % themeRoster.length];
+  const themeSlot2 = themeRoster[(offset + 1) % themeRoster.length];
+  const themeSlot3 = themeRoster[(offset + 2) % themeRoster.length];
+  const themeSlot4 = themeRoster[(offset + 3) % themeRoster.length];
+
   return [
     {
       pillarId: 'missed-calls',
       buyingMotivation: 'make_money',
       ctaType: 'calculator', // Slot 1: Calculator CTA (Missed calls & lost revenue)
-      theme: 'garage-amber',
+      theme: themeSlot1,
       slot: '08:15',
+      hasJoke: true, // Post 1 includes relatable garage door humor
     },
     {
       pillarId: 'after-hours',
       buyingMotivation: 'reduce_pain',
       ctaType: alt1, // Slot 2: Alternative CTA #1 (Owner frustrations, after-hours calls)
-      theme: 'modern-navy',
+      theme: themeSlot2,
       slot: '11:45',
+      hasJoke: false,
     },
     {
       pillarId: 'lead-capture-booking',
       buyingMotivation: 'gain_time',
       ctaType: 'calculator', // Slot 3: Calculator CTA (Time back & personal freedom)
-      theme: 'precision-blueprint',
+      theme: themeSlot3,
       slot: '15:30',
+      hasJoke: false,
     },
     {
       pillarId: 'ai-agent-demo',
       buyingMotivation: 'reduce_waste',
       ctaType: alt2, // Slot 4: Alternative CTA #2 (AI call demo & lead waste)
-      theme: 'emerald-minimal',
+      theme: themeSlot4,
       slot: '18:45',
+      hasJoke: true, // Post 2 includes relatable garage door humor
     },
   ];
 }
@@ -698,6 +795,7 @@ export async function generateDailyBatch(): Promise<Campaign[]> {
         ctaType: plan.ctaType,
         theme: plan.theme,
         targetSlot,
+        hasJoke: plan.hasJoke,
       });
       rawCampaigns.push(camp);
     } catch (err) {
