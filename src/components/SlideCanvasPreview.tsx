@@ -92,6 +92,46 @@ export const SlideCanvasPreview: React.FC<SlideCanvasPreviewProps> = ({
   };
 
   const isPortrait = format === 'portrait_4_5';
+  const isCalculatorCta =
+    slide.ctaUrl?.includes('caculator') ||
+    slide.bodyText?.includes('caculator') ||
+    slide.headline?.toLowerCase().includes('calculator') ||
+    slide.supportingLabel?.toLowerCase().includes('calculator') ||
+    slide.highlightMetric?.label?.includes('caculator') ||
+    slide.highlightMetric?.value?.includes('caculator');
+
+  const isDmCalculator =
+    !isCalculatorCta &&
+    (slide.headline?.toLowerCase().includes('dm') ||
+      slide.bodyText?.toLowerCase().includes('dm me calculator') ||
+      slide.highlightMetric?.value?.toLowerCase().includes('calculator'));
+
+  const isDemoCta =
+    !isCalculatorCta &&
+    !isDmCalculator &&
+    (slide.bodyText?.toLowerCase().includes('bio') ||
+      slide.bodyText?.toLowerCase().includes('demo') ||
+      slide.headline?.toLowerCase().includes('demo') ||
+      slide.highlightMetric?.value?.toLowerCase().includes('demo') ||
+      slide.highlightMetric?.value?.includes('844'));
+
+  let footerLabel = 'apexdoorai.com';
+  let buttonLabel = 'SWIPE';
+  if (slide.slideNumber === 7) {
+    if (isCalculatorCta) {
+      footerLabel = 'https://garage-door-lost-revenue-caculator.vercel.app/';
+      buttonLabel = 'RUN YOUR NUMBERS';
+    } else if (isDmCalculator) {
+      footerLabel = 'DM "CALCULATOR" for free calculator';
+      buttonLabel = 'DM "CALCULATOR"';
+    } else if (isDemoCta) {
+      footerLabel = 'Link in bio to call 24/7 demo agent';
+      buttonLabel = 'TRY LIVE DEMO';
+    } else {
+      footerLabel = 'DM me and let’s talk missed calls';
+      buttonLabel = 'LET’S TALK';
+    }
+  }
 
   const renderIcon = (iconName: string) => {
     const props = { className: 'w-5 h-5 ' + themeStyles.accentText };
@@ -222,20 +262,20 @@ export const SlideCanvasPreview: React.FC<SlideCanvasPreviewProps> = ({
 
       {/* Slide Footer */}
       <div className="relative z-10 px-6 md:px-8 py-4 border-t border-white/5 flex items-center justify-between text-xs text-slate-400">
-        <div className="flex items-center gap-2 font-mono text-[11px]">
+        <div className="flex items-center gap-2 font-mono text-[11px] truncate max-w-[280px]">
           {renderIcon(slide.icon)}
-          <span className="text-slate-300 font-semibold">
-            {slide.slideNumber === 7 ? `Live Line: ${demoPhone}` : 'apexdoorai.com'}
+          <span className="text-slate-300 font-semibold truncate">
+            {footerLabel}
           </span>
         </div>
 
         {slide.slideNumber === 7 ? (
-          <div className={`px-4 py-1.5 rounded-full ${themeStyles.accentBg} text-black font-extrabold text-xs shadow-lg flex items-center gap-1.5`}>
-            <span>DIAL TEST LINE</span>
+          <div className={`px-3.5 py-1.5 rounded-full ${themeStyles.accentBg} text-black font-extrabold text-xs shadow-lg flex items-center gap-1.5 shrink-0`}>
+            <span>{buttonLabel}</span>
             <span>👉</span>
           </div>
         ) : (
-          <div className="flex items-center gap-1 font-semibold text-[11px] text-slate-300 tracking-wide">
+          <div className="flex items-center gap-1 font-semibold text-[11px] text-slate-300 tracking-wide shrink-0">
             <span>SWIPE</span>
             <span className={themeStyles.accentText}>➡️</span>
           </div>

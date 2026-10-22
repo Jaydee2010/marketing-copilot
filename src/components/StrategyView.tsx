@@ -125,6 +125,46 @@ export const StrategyView: React.FC<StrategyViewProps> = ({
               className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-amber-400 font-mono font-bold focus:outline-none focus:border-amber-500"
             />
           </div>
+
+          <div className="space-y-1.5 md:col-span-2 lg:col-span-3">
+            <label className="text-xs font-semibold text-slate-300">
+              Required Revenue-Loss Calculator URL (Used in at least 2 daily posts)
+            </label>
+            <input
+              type="text"
+              value={localStrategy.calculatorUrl || 'https://garage-door-lost-revenue-caculator.vercel.app/'}
+              onChange={(e) => setLocalStrategy({ ...localStrategy, calculatorUrl: e.target.value })}
+              className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-emerald-400 font-mono font-bold focus:outline-none focus:border-emerald-500"
+            />
+            <span className="text-[10px] text-slate-500 font-mono">
+              Rendered on Slide 7 and injected into captions for high-converting lead capture.
+            </span>
+          </div>
+        </div>
+
+        {/* 4 Buying Motivations Info */}
+        <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+          <span className="text-xs font-bold text-white block">
+            The 4 Buying Motivations (Applied to Every Campaign):
+          </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1 text-xs text-slate-400">
+            <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
+              <span className="font-bold text-amber-400 block mb-1">1. Make More Money</span>
+              <p className="text-[11px]">Unanswered emergency calls losing $280 - $600 repairs to competitors.</p>
+            </div>
+            <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
+              <span className="font-bold text-blue-400 block mb-1">2. Reduce Pain</span>
+              <p className="text-[11px]">11 PM calls, Sunday dinner interruptions, tech phone burnout.</p>
+            </div>
+            <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
+              <span className="font-bold text-sky-400 block mb-1">3. Gain Time</span>
+              <p className="text-[11px]">"If you got two hours a day back, what would you do with them?"</p>
+            </div>
+            <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
+              <span className="font-bold text-emerald-400 block mb-1">4. Reduce Waste</span>
+              <p className="text-[11px]">Paying $65+ for Google LSA leads that ring through to voicemail.</p>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

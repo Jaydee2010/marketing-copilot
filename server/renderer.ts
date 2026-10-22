@@ -246,18 +246,59 @@ export function generateSlideSvg(
   // Footer with Swipe Prompt or CTA
   const footerY = height - 90;
   const isLastSlide = slide.slideNumber === 7;
+  const isCalculatorCta =
+    slide.ctaUrl?.includes('caculator') ||
+    slide.bodyText?.includes('caculator') ||
+    slide.headline?.toLowerCase().includes('calculator') ||
+    slide.supportingLabel?.toLowerCase().includes('calculator') ||
+    slide.highlightMetric?.label?.includes('caculator') ||
+    slide.highlightMetric?.value?.includes('caculator');
+
+  const isDmCalculator =
+    !isCalculatorCta &&
+    (slide.headline?.toLowerCase().includes('dm') ||
+      slide.bodyText?.toLowerCase().includes('dm me calculator') ||
+      slide.highlightMetric?.value?.toLowerCase().includes('calculator'));
+
+  const isDemoCta =
+    !isCalculatorCta &&
+    !isDmCalculator &&
+    (slide.bodyText?.toLowerCase().includes('bio') ||
+      slide.bodyText?.toLowerCase().includes('demo') ||
+      slide.headline?.toLowerCase().includes('demo') ||
+      slide.highlightMetric?.value?.toLowerCase().includes('demo') ||
+      slide.highlightMetric?.value?.includes('844'));
+
+  let lastSlideButtonText = 'RUN YOUR NUMBERS 👉';
+  let lastSlideFooterText = 'https://garage-door-lost-revenue-caculator.vercel.app/';
+
+  if (isCalculatorCta) {
+    lastSlideButtonText = 'RUN YOUR NUMBERS 👉';
+    lastSlideFooterText = 'https://garage-door-lost-revenue-caculator.vercel.app/';
+  } else if (isDmCalculator) {
+    lastSlideButtonText = 'DM "CALCULATOR" 💬';
+    lastSlideFooterText = 'DM me CALCULATOR for the free estimator';
+  } else if (isDemoCta) {
+    lastSlideButtonText = 'TRY LIVE DEMO 👉';
+    lastSlideFooterText = 'Link in bio to test the 24/7 demo agent';
+  } else {
+    // dm_conversation or other
+    lastSlideButtonText = 'LET’S TALK 💬';
+    lastSlideFooterText = 'DM me and let’s talk missed calls';
+  }
+
   const footer = `
     <g transform="translate(80, ${footerY})">
       <line x1="0" y1="0" x2="${width - 160}" y2="0" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1"/>
       ${
         isLastSlide
           ? `
-          <rect x="${width - 460}" y="15" width="300" height="48" rx="24" fill="url(#accentGrad)"/>
-          <text x="${width - 310}" y="45" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="17" fill="#000000" text-anchor="middle">CALL DEMO LINE 👉</text>
-          <text x="0" y="45" font-family="Plus Jakarta Sans, sans-serif" font-weight="700" font-size="18" fill="${palette.accent}">Test Live: ${escapeXml(demoPhone)}</text>
-          `
+            <rect x="${width - 440}" y="15" width="280" height="48" rx="24" fill="url(#accentGrad)"/>
+            <text x="${width - 300}" y="45" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="16" fill="#000000" text-anchor="middle">${escapeXml(lastSlideButtonText)}</text>
+            <text x="0" y="45" font-family="JetBrains Mono, monospace" font-weight="700" font-size="${lastSlideFooterText.length > 40 ? '13' : '15'}" fill="${palette.accent}">${escapeXml(lastSlideFooterText)}</text>
+            `
           : `
-          <text x="0" y="45" font-family="Plus Jakarta Sans, sans-serif" font-weight="500" font-size="16" fill="${palette.textSecondary}">apexdoorai.com // 24/7 Voice Dispatch</text>
+          <text x="0" y="45" font-family="Plus Jakarta Sans, sans-serif" font-weight="500" font-size="16" fill="${palette.textSecondary}">apexdoorai.com // Garage Door Call Handling</text>
           <g transform="translate(${width - 320}, 20)">
             <text x="0" y="24" font-family="Plus Jakarta Sans, sans-serif" font-weight="700" font-size="16" fill="${palette.accent}">SWIPE TO LEARN</text>
             <path d="M 135 18 L 155 18 M 147 10 L 155 18 L 147 26" stroke="${palette.accent}" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>

@@ -17,6 +17,10 @@ import {
   Bot,
   Flame,
   ArrowRight,
+  Calculator,
+  MessageSquare,
+  PhoneCall,
+  CheckCheck,
 } from 'lucide-react';
 import { Campaign, AppServerStatus, PublishingLog } from '../types/index';
 
@@ -30,6 +34,7 @@ interface CockpitViewProps {
   onPublishCampaign: (id: string, platform: 'linkedin' | 'instagram' | 'both') => Promise<void>;
   onRenderCampaign: (id: string) => Promise<void>;
   onToggleSchedule: (scheduleEnabled: boolean) => Promise<void>;
+  onEnforceCtas?: () => Promise<void>;
   loadingAction: boolean;
 }
 
@@ -43,6 +48,7 @@ export const CockpitView: React.FC<CockpitViewProps> = ({
   onPublishCampaign,
   onRenderCampaign,
   onToggleSchedule,
+  onEnforceCtas,
   loadingAction,
 }) => {
   const [activePublishingId, setActivePublishingId] = useState<string | null>(null);
@@ -235,6 +241,38 @@ export const CockpitView: React.FC<CockpitViewProps> = ({
         </div>
       </div>
 
+      {/* CTA Rotation Compliance Card */}
+      <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+            <CheckCheck className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="text-xs font-bold text-white flex items-center gap-2">
+              <span>Daily CTA Rotation Rules</span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                2x Calculator + 2x Alternative CTAs
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-400 mt-0.5">
+              Strictly balances 2 revenue-loss calculator URLs with 2 distinct DM/Demo voice agent prompts daily.
+            </p>
+          </div>
+        </div>
+
+        {onEnforceCtas && (
+          <button
+            onClick={onEnforceCtas}
+            disabled={loadingAction}
+            className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 transition-all flex items-center gap-1.5 shrink-0"
+            title="Validate every post adheres to the 2 Calculator + 2 Alternative CTA rule"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-emerald-400 ${loadingAction ? 'animate-spin' : ''}`} />
+            <span>Enforce Rules Now</span>
+          </button>
+        )}
+      </div>
+
       {/* Today's Queue (4 Scheduled Slots) */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -254,6 +292,15 @@ export const CockpitView: React.FC<CockpitViewProps> = ({
             const ig = campaign.platforms.instagram;
             const hasRenderedAssets = campaign.renderedAssets && campaign.renderedAssets.length >= 7;
 
+            const isCalc =
+              campaign.ctaType === 'calculator' ||
+              campaign.platforms.linkedin.caption.includes('caculator') ||
+              campaign.slides.some((s) => s.ctaUrl?.includes('caculator'));
+
+            const isDmCalc = campaign.ctaType === 'dm_calculator';
+            const isDemo = campaign.ctaType === 'demo_cta' || campaign.ctaType === 'demo_call';
+            const isConversation = campaign.ctaType === 'dm_conversation';
+
             return (
               <div
                 key={campaign.id}
@@ -271,6 +318,35 @@ export const CockpitView: React.FC<CockpitViewProps> = ({
                       <span className="text-sm md:text-base font-bold text-white hover:text-amber-400 cursor-pointer transition-colors" onClick={() => onSelectCampaign(campaign.id)}>
                         {campaign.title}
                       </span>
+                      {campaign.buyingMotivation && (
+                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20 uppercase">
+                          {campaign.buyingMotivation.replace('_', ' ')}
+                        </span>
+                      )}
+
+                      {/* Explicit CTA Badge */}
+                      {isCalc ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                          <Calculator className="w-3 h-3" /> CALCULATOR CTA (URL)
+                        </span>
+                      ) : isDmCalc ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                          <MessageSquare className="w-3 h-3" /> DM CALCULATOR
+                        </span>
+                      ) : isDemo ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/30">
+                          <PhoneCall className="w-3 h-3" /> DEMO AGENT CTA
+                        </span>
+                      ) : isConversation ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-500/15 text-purple-400 border border-purple-500/30">
+                          <MessageSquare className="w-3 h-3" /> CONVERSATION CTA
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-800 text-slate-400 border border-slate-700">
+                          {campaign.ctaType}
+                        </span>
+                      )}
+
                       {campaign.isDemo && (
                         <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-800 text-slate-400 border border-slate-700">
                           SAMPLE READY

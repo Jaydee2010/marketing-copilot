@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import JSZip from 'jszip';
 import { db } from './server/db';
 import { scheduler } from './server/scheduler';
-import { generateSingleCampaign, generateDailyBatch } from './server/gemini';
+import { generateSingleCampaign, generateDailyBatch, validateAndEnforceDailyBatch } from './server/gemini';
 import { renderCampaignSlides } from './server/renderer';
 import { publishToLinkedIn, getLinkedInAuthUrl, exchangeLinkedInCode } from './server/linkedin';
 import { publishToInstagram } from './server/instagram';
@@ -23,6 +23,14 @@ if (!fs.existsSync(ASSETS_DIR)) {
 }
 
 app.use(express.json({ limit: '10mb' }));
+
+// Healthcheck and keep-awake endpoints for Render & Uptime monitors
+app.get('/health', (_req, res) => {
+  res.status(200).send('OK');
+});
+app.get('/ping', (_req, res) => {
+  res.status(200).send('pong');
+});
 
 // Static asset serving for rendered slide PNGs
 app.use('/api/assets', express.static(ASSETS_DIR));
@@ -268,6 +276,37 @@ app.post('/api/campaigns/generate-batch', async (req, res) => {
   }
 });
 
+// Enforce & Validate CTA Rotation Rules across the 4 daily posts
+app.post('/api/campaigns/enforce-ctas', async (req, res) => {
+  try {
+    const all = db.getCampaigns();
+    const targetSlice = all.slice(0, 4);
+    const { validation, campaigns: revised } = validateAndEnforceDailyBatch(targetSlice);
+
+    // Save revised campaigns back to db
+    for (const c of revised) {
+      db.saveCampaign(c);
+      // Re-render slides to ensure Slide 7 displays the revised CTA
+      try {
+        await renderCampaignSlides(c.id, 'portrait_4_5');
+      } catch (renderErr) {
+        console.warn(`Could not auto-render revised campaign ${c.id}:`, renderErr);
+      }
+    }
+
+    res.json({
+      validation,
+      campaigns: db.getCampaigns(),
+      message: validation.valid
+        ? 'All 4 posts adhere to the CTA rotation rules (2x Calculator, 2x Distinct Alternative CTAs).'
+        : `CTA rules enforced and revised (${validation.issues.length} adjustments made).`,
+    });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ error: msg });
+  }
+});
+
 // Slide Rendering
 app.post('/api/campaigns/:id/render', async (req, res) => {
   try {
@@ -339,8 +378,13 @@ async function startServer() {
   // Start the background scheduler
   scheduler.start();
 
+  const isProd =
+    process.env.NODE_ENV === 'production' ||
+    !!process.env.RENDER ||
+    fs.existsSync(path.resolve(process.cwd(), 'dist', 'index.html'));
+
   // If in development mode, hook up Vite middleware
-  if (process.env.NODE_ENV !== 'production') {
+  if (!isProd) {
     const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -351,13 +395,28 @@ async function startServer() {
     // Production static serving
     const distPath = path.resolve(process.cwd(), 'dist');
     app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.resolve(distPath, 'index.html'));
+    app.get('*', (_req, res) => {
+      const indexFile = path.resolve(distPath, 'index.html');
+      if (fs.existsSync(indexFile)) {
+        res.sendFile(indexFile);
+      } else {
+        res.status(200).send(`
+          <!DOCTYPE html>
+          <html>
+            <head><title>AI Marketing Autopilot</title></head>
+            <body style="font-family:sans-serif;padding:40px;background:#0f172a;color:#f8fafc;">
+              <h2>App is starting up...</h2>
+              <p>Dist assets are building. Please refresh in a few moments.</p>
+            </body>
+          </html>
+        `);
+      }
     });
   }
 
-  app.listen(PORT, () => {
-    console.log(`[Autopilot Server] Running on http://0.0.0.0:${PORT}`);
+  const portNum = Number(PORT) || 3000;
+  app.listen(portNum, '0.0.0.0', () => {
+    console.log(`[Autopilot Server] Running on http://0.0.0.0:${portNum}`);
   });
 }
 

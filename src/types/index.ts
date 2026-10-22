@@ -27,11 +27,30 @@ export type SlideLayoutType =
   | 'metrics_grid'
   | 'cta_action';
 
+export type BuyingMotivation = 'make_money' | 'reduce_pain' | 'gain_time' | 'reduce_waste';
+
+export type CtaType =
+  | 'calculator' // Direct link to Revenue-Loss Calculator (2 posts/day required)
+  | 'dm_calculator' // "DM me CALCULATOR and I'll send you the free revenue-loss calculator"
+  | 'demo_cta' // "Want to hear how an AI voice agent handles garage door calls? Go to the link in my bio and call the demo yourself."
+  | 'dm_conversation' // "Interested in handling more missed calls? DM me and let's talk."
+  | 'demo_call' // Alias for demo_cta
+  | 'pilot_invite' // Legacy fallback
+  | 'checklist'; // Legacy fallback
+
+export interface CtaBatchValidation {
+  valid: boolean;
+  calculatorCount: number;
+  alternativeCount: number;
+  distinctAlternativesCount: number;
+  issues: string[];
+}
+
 export interface Slide {
   slideNumber: number; // 1 to 7
   headline: string;
   bodyText: string;
-  supportingLabel: string; // e.g. "PILLAR 01 // MISSED CALLS"
+  supportingLabel: string; // e.g. "SLIDE 01 // THE HOOK"
   layoutType: SlideLayoutType;
   icon: string;
   visualInstruction?: string;
@@ -40,6 +59,7 @@ export interface Slide {
     value: string;
     label: string;
   };
+  ctaUrl?: string; // For Slide 7 calculator URL
 }
 
 export type SlideFormat = 'portrait_4_5' | 'square_1_1';
@@ -73,6 +93,8 @@ export interface Campaign {
   title: string;
   targetAudience: string;
   pillarId: ContentPillarId;
+  buyingMotivation?: BuyingMotivation;
+  ctaType?: CtaType;
   objective: string;
   contentAngleExplanation: string;
   theme: SlideTheme;
@@ -97,6 +119,7 @@ export interface MarketingStrategy {
   toneOfVoice: string;
   demoPhoneNumber: string;
   websiteUrl: string;
+  calculatorUrl: string; // https://garage-door-lost-revenue-caculator.vercel.app/
   customPillars: ContentPillar[];
   bannedClaims: string[];
   companyHighlights: string[];

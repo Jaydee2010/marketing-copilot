@@ -11,6 +11,8 @@ import {
   SlideFormat,
   ContentPillarId,
   SlideTheme,
+  BuyingMotivation,
+  CtaType,
 } from './types/index';
 import { Navbar } from './components/Navbar';
 import { CockpitView } from './components/CockpitView';
@@ -176,6 +178,8 @@ export default function App() {
   // Generate Single Campaign
   const handleGenerateSingle = async (params: {
     pillarId: ContentPillarId;
+    buyingMotivation?: BuyingMotivation;
+    ctaType?: CtaType;
     customTopic?: string;
     theme: SlideTheme;
     targetSlot: string;
@@ -327,6 +331,26 @@ export default function App() {
     }
   };
 
+  // Enforce & Validate CTA Rotation Rules across daily batch
+  const handleEnforceCtas = async () => {
+    try {
+      setActionLoading(true);
+      showNotification('Auditing daily posts for 2x Calculator + 2x Alternative CTAs...', 'info');
+      const res = await fetch('/api/campaigns/enforce-ctas', { method: 'POST' });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Failed to enforce CTA rotation');
+      }
+      const data = await res.json();
+      setCampaigns(data.campaigns);
+      showNotification(data.message, data.validation.valid ? 'success' : 'info');
+    } catch (err: any) {
+      showNotification(`Enforce CTA error: ${err.message}`, 'error');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   // Update LinkedIn Credentials
   const handleUpdateLinkedIn = async (creds: Partial<LinkedInCredentials>) => {
     try {
@@ -421,6 +445,7 @@ export default function App() {
                 onPublishCampaign={handlePublishCampaign}
                 onRenderCampaign={(id) => handleRenderCampaign(id, 'portrait_4_5')}
                 onToggleSchedule={handleToggleSchedule}
+                onEnforceCtas={handleEnforceCtas}
                 loadingAction={actionLoading}
               />
             )}
