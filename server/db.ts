@@ -79,14 +79,14 @@ export const DEFAULT_PILLARS: ContentPillar[] = [
 ];
 
 export const DEFAULT_STRATEGY: MarketingStrategy = {
-  businessName: 'ApexDoor Call Systems',
+  businessName: 'Stepstone AI Agency',
   brandTagline: 'Reliable Call Handling & Revenue Protection for US Garage Door Companies',
   targetAudience: 'US Garage Door Repair and Installation Business Owners, General Managers, and Dispatchers',
   targetRegion: 'United States (Residential & Commercial)',
   coreService: 'Intelligent call handling that answers when technicians are on ladders or after hours, qualifies broken springs and opener repairs, and routes details so owners stop losing jobs to competitors.',
   toneOfVoice: 'Conversational, direct, authentic American trade contractor tone. Focus on business problems, owner personal freedom, and revenue—never AI buzzwords.',
   demoPhoneNumber: '(844) 385-DOOR',
-  websiteUrl: 'https://apexdoorai.com/demo',
+  websiteUrl: 'https://stepstoneai.agency',
   calculatorUrl: CALCULATOR_URL,
   customPillars: DEFAULT_PILLARS,
   bannedClaims: [
@@ -130,10 +130,10 @@ export const DEFAULT_INSTAGRAM: InstagramCredentials = {
   isConnected: false,
   metaAppId: '',
   metaAppSecret: '',
-  instagramBusinessId: '',
+  instagramBusinessId: '17841480305353096',
   facebookPageId: '',
-  isTestMode: true,
-  publicHostUrl: '',
+  isTestMode: false,
+  publicHostUrl: 'https://marketing-copilot-rvde.onrender.com',
 };
 
 export const INITIAL_DEMO_CAMPAIGNS: Campaign[] = [
@@ -715,8 +715,14 @@ class DatabaseManager {
         const raw = fs.readFileSync(DB_FILE, 'utf-8');
         const parsed = JSON.parse(raw);
 
-        // Check if strategy needs migration for calculatorUrl
+        // Check if strategy needs migration for Stepstone AI Agency and calculatorUrl
         const strategy: MarketingStrategy = parsed.strategy || DEFAULT_STRATEGY;
+        if (!strategy.businessName || strategy.businessName.includes('Apex')) {
+          strategy.businessName = 'Stepstone AI Agency';
+        }
+        if (!strategy.websiteUrl || strategy.websiteUrl.includes('apexdoor')) {
+          strategy.websiteUrl = 'https://stepstoneai.agency';
+        }
         if (!strategy.calculatorUrl) {
           strategy.calculatorUrl = CALCULATOR_URL;
         }

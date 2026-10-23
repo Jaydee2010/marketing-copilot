@@ -153,7 +153,7 @@ export function generateSlideSvg(
   theme: SlideTheme,
   format: SlideFormat,
   campaignTitle: string,
-  businessName = 'ApexDoor Voice AI',
+  businessName = 'Stepstone AI Agency',
   demoPhone = '(844) 385-DOOR'
 ): string {
   const width = 1080;
@@ -337,7 +337,7 @@ export function generateSlideSvg(
             <text x="0" y="45" font-family="JetBrains Mono, monospace" font-weight="700" font-size="${lastSlideFooterText.length > 40 ? '13' : '15'}" fill="${palette.accent}">${escapeXml(lastSlideFooterText)}</text>
             `
           : `
-          <text x="0" y="45" font-family="Plus Jakarta Sans, sans-serif" font-weight="500" font-size="16" fill="${palette.textSecondary}">apexdoorai.com // Garage Door Call Handling</text>
+          <text x="0" y="45" font-family="Plus Jakarta Sans, sans-serif" font-weight="500" font-size="16" fill="${palette.textSecondary}">stepstoneai.agency // Garage Door Call Handling</text>
           <g transform="translate(${width - 320}, 20)">
             <text x="0" y="24" font-family="Plus Jakarta Sans, sans-serif" font-weight="700" font-size="16" fill="${palette.accent}">SWIPE TO LEARN</text>
             <path d="M 135 18 L 155 18 M 147 10 L 155 18 L 147 26" stroke="${palette.accent}" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>

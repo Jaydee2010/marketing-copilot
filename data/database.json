@@ -1,13 +1,13 @@
 {
   "strategy": {
-    "businessName": "ApexDoor Call Systems",
+    "businessName": "Stepstone AI Agency",
     "brandTagline": "Reliable Call Handling & Revenue Protection for US Garage Door Companies",
     "targetAudience": "US Garage Door Repair and Installation Business Owners, General Managers, and Dispatchers",
     "targetRegion": "United States (Residential & Commercial)",
     "coreService": "Intelligent call handling that answers when technicians are on ladders or after hours, qualifies broken springs and opener repairs, and routes details so owners stop losing jobs to competitors.",
     "toneOfVoice": "Conversational, direct, authentic American trade contractor tone. Focus on business problems, owner personal freedom, and revenue—never AI buzzwords.",
     "demoPhoneNumber": "(844) 385-DOOR",
-    "websiteUrl": "https://apexdoorai.com/demo",
+    "websiteUrl": "https://stepstoneai.agency",
     "calculatorUrl": "https://garage-door-lost-revenue-caculator.vercel.app/",
     "customPillars": [
       {
@@ -110,10 +110,10 @@
     "isConnected": false,
     "metaAppId": "",
     "metaAppSecret": "",
-    "instagramBusinessId": "",
+    "instagramBusinessId": "17841480305353096",
     "facebookPageId": "",
-    "isTestMode": true,
-    "publicHostUrl": ""
+    "isTestMode": false,
+    "publicHostUrl": "https://marketing-copilot-rvde.onrender.com"
   },
   "campaigns": [
     {
@@ -1043,9 +1043,9 @@
     "todayGeminiEstimatedTokens": 0,
     "todayPostsLinkedIn": 0,
     "todayPostsInstagram": 0,
-    "todayRenderedAssetsCount": 28,
+    "todayRenderedAssetsCount": 0,
     "totalAssetsDiskBytes": 1606236,
-    "lastQuotaResetDate": "2026-10-21",
+    "lastQuotaResetDate": "2026-10-23",
     "maxDailyGeminiRequests": 50,
     "maxDailyPostsPerPlatform": 4
   }

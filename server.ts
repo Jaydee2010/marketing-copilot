@@ -8,7 +8,7 @@ import { scheduler } from './server/scheduler';
 import { generateSingleCampaign, generateDailyBatch, validateAndEnforceDailyBatch } from './server/gemini';
 import { renderCampaignSlides } from './server/renderer';
 import { publishToLinkedIn, getLinkedInAuthUrl, exchangeLinkedInCode } from './server/linkedin';
-import { publishToInstagram } from './server/instagram';
+import { publishToInstagram, verifyInstagramCredentials } from './server/instagram';
 
 dotenv.config();
 
@@ -194,7 +194,7 @@ app.get('/api/integrations/instagram', (req, res) => {
   });
 });
 
-app.put('/api/integrations/instagram', (req, res) => {
+app.put('/api/integrations/instagram', async (req, res) => {
   const current = db.getInstagram();
   const updateData = { ...req.body };
   if (updateData.metaAppSecret === '••••••••••••') {
@@ -203,7 +203,159 @@ app.put('/api/integrations/instagram', (req, res) => {
   if (updateData.userAccessToken === '••••••••••••') {
     updateData.userAccessToken = current.userAccessToken;
   }
+
+  // Normalize publicHostUrl
+  if (updateData.publicHostUrl && !updateData.publicHostUrl.startsWith('http')) {
+    updateData.publicHostUrl = `https://${updateData.publicHostUrl.replace(/^\/+/, '')}`;
+  }
+
+  let verificationWarning: string | undefined;
+
+  // When unchecking sandbox mode with credentials present, verify live with Meta Graph API
+  if (!updateData.isTestMode && updateData.userAccessToken && updateData.instagramBusinessId) {
+    try {
+      const verifyRes = await verifyInstagramCredentials(
+        updateData.instagramBusinessId,
+        updateData.userAccessToken
+      );
+      if (verifyRes.success) {
+        updateData.isConnected = true;
+        updateData.accountUsername = verifyRes.username;
+        updateData.lastVerifiedAt = new Date().toISOString();
+        db.addLog({
+          campaignId: 'system',
+          campaignTitle: 'Instagram Meta Graph API Integration',
+          platform: 'instagram',
+          action: 'scheduled_trigger',
+          status: 'success',
+          message: `Connected & verified Meta Instagram account @${verifyRes.username} (ID: ${updateData.instagramBusinessId}). Ready for live carousels.`,
+        });
+      } else {
+        updateData.isConnected = false;
+        verificationWarning = verifyRes.error;
+        db.addLog({
+          campaignId: 'system',
+          campaignTitle: 'Instagram Meta Graph API Integration',
+          platform: 'instagram',
+          action: 'validation_fail',
+          status: 'failed',
+          message: `Instagram live verification warning: ${verifyRes.error}`,
+        });
+      }
+    } catch (e: any) {
+      verificationWarning = e.message;
+      updateData.isConnected = false;
+    }
+  } else if (updateData.isTestMode) {
+    updateData.isConnected = false;
+  }
+
   const updated = db.saveInstagram(updateData);
+  res.json({
+    ...updated,
+    metaAppSecret: updated.metaAppSecret ? '••••••••••••' : '',
+    userAccessToken: updated.userAccessToken ? '••••••••••••' : '',
+    verificationWarning,
+  });
+});
+
+// Dedicated on-demand verification endpoint for Instagram Meta Graph API
+app.post('/api/integrations/instagram/verify', async (req, res) => {
+  try {
+    const current = db.getInstagram();
+    const businessId = (req.body.instagramBusinessId || current.instagramBusinessId || '').trim();
+    let token = req.body.userAccessToken;
+    if (!token || token === '••••••••••••') {
+      token = current.userAccessToken;
+    }
+    token = (token || '').trim();
+    const publicHostUrl = (req.body.publicHostUrl || current.publicHostUrl || '').trim();
+
+    if (!businessId || !token) {
+      return res.status(400).json({
+        success: false,
+        error: 'Please provide both Instagram Business Account ID and Meta User/Page Access Token.',
+      });
+    }
+
+    const result = await verifyInstagramCredentials(businessId, token);
+
+    if (result.success) {
+      const updated = db.saveInstagram({
+        instagramBusinessId: businessId,
+        userAccessToken: token,
+        publicHostUrl: publicHostUrl || current.publicHostUrl,
+        isConnected: true,
+        isTestMode: false,
+        accountUsername: result.username,
+        lastVerifiedAt: new Date().toISOString(),
+      });
+
+      db.addLog({
+        campaignId: 'system',
+        campaignTitle: 'Instagram Meta Graph API Integration',
+        platform: 'instagram',
+        action: 'scheduled_trigger',
+        status: 'success',
+        message: `Verified Meta Instagram Business Account @${result.username} (ID: ${businessId}). Live 7-slide carousel publishing active.`,
+      });
+
+      return res.json({
+        success: true,
+        isConnected: true,
+        accountUsername: result.username,
+        name: result.name,
+        message: `Verified successfully! Connected as @${result.username}.`,
+        credentials: {
+          ...updated,
+          metaAppSecret: updated.metaAppSecret ? '••••••••••••' : '',
+          userAccessToken: updated.userAccessToken ? '••••••••••••' : '',
+        },
+      });
+    } else {
+      // Save credentials but keep isConnected: false
+      db.saveInstagram({
+        instagramBusinessId: businessId,
+        userAccessToken: token,
+        publicHostUrl: publicHostUrl || current.publicHostUrl,
+        isConnected: false,
+      });
+
+      db.addLog({
+        campaignId: 'system',
+        campaignTitle: 'Instagram Meta Graph API Integration',
+        platform: 'instagram',
+        action: 'validation_fail',
+        status: 'failed',
+        message: `Meta Instagram verification failed: ${result.error}`,
+      });
+
+      return res.status(400).json({
+        success: false,
+        isConnected: false,
+        error: result.error,
+        details: result.details,
+      });
+    }
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message || 'Server error during verification' });
+  }
+});
+
+// Disconnect Instagram
+app.post('/api/integrations/instagram/disconnect', (req, res) => {
+  const updated = db.saveInstagram({
+    isConnected: false,
+    isTestMode: true,
+  });
+  db.addLog({
+    campaignId: 'system',
+    campaignTitle: 'Instagram Integration',
+    platform: 'instagram',
+    action: 'scheduled_trigger',
+    status: 'paused',
+    message: 'Instagram integration disconnected. Returned to Sandbox Mode.',
+  });
   res.json({
     ...updated,
     metaAppSecret: updated.metaAppSecret ? '••••••••••••' : '',

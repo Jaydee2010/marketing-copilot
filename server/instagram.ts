@@ -3,6 +3,60 @@ import { db } from './db';
 import { renderCampaignSlides } from './renderer';
 import { PublishResult } from './linkedin';
 
+export interface InstagramVerifyResult {
+  success: boolean;
+  username?: string;
+  name?: string;
+  id?: string;
+  error?: string;
+  details?: unknown;
+}
+
+export async function verifyInstagramCredentials(
+  businessId: string,
+  token: string
+): Promise<InstagramVerifyResult> {
+  const cleanId = (businessId || '').trim();
+  const cleanToken = (token || '').trim();
+
+  if (!cleanId || !cleanToken) {
+    return {
+      success: false,
+      error: 'Both Instagram Business Account ID and Meta User/Page Access Token are required.',
+    };
+  }
+
+  try {
+    const res = await fetch(
+      `https://graph.facebook.com/v19.0/${encodeURIComponent(cleanId)}?fields=id,username,name,profile_picture_url&access_token=${encodeURIComponent(cleanToken)}`,
+      { method: 'GET' }
+    );
+
+    const data = await res.json();
+    if (!res.ok || data.error) {
+      const errMsg = data.error?.message || `Meta Graph API rejected verification (HTTP ${res.status})`;
+      return {
+        success: false,
+        error: errMsg,
+        details: data.error,
+      };
+    }
+
+    return {
+      success: true,
+      id: data.id,
+      username: data.username || data.name || cleanId,
+      name: data.name,
+    };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return {
+      success: false,
+      error: `Network error reaching Meta Graph API: ${msg}`,
+    };
+  }
+}
+
 export async function publishToInstagram(campaignId: string): Promise<PublishResult> {
   const campaign = db.getCampaign(campaignId);
   if (!campaign) {
@@ -72,9 +126,13 @@ export async function publishToInstagram(campaignId: string): Promise<PublishRes
   }
 
   // Determine public host URL for Meta Graph API to fetch images
-  const hostUrl = creds.publicHostUrl || process.env.APP_URL || '';
+  let hostUrl = creds.publicHostUrl || process.env.APP_URL || '';
   if (!hostUrl || !hostUrl.startsWith('http')) {
-    throw new Error('Meta Graph API requires images to be accessible over a public HTTPS URL. Please set your public App URL in Instagram settings.');
+    if (hostUrl && !hostUrl.startsWith('http')) {
+      hostUrl = `https://${hostUrl.replace(/^\/+/, '')}`;
+    } else {
+      throw new Error('Meta Graph API requires images to be accessible over a public HTTPS URL. Please set your public App URL in Instagram settings.');
+    }
   }
 
   // REAL Official Meta Instagram Graph API Carousel Workflow
@@ -82,13 +140,14 @@ export async function publishToInstagram(campaignId: string): Promise<PublishRes
     campaign.platforms.instagram.status = 'publishing';
     db.saveCampaign(campaign);
 
-    const igUserId = creds.instagramBusinessId;
-    const token = creds.userAccessToken;
+    const igUserId = creds.instagramBusinessId!.trim();
+    const token = creds.userAccessToken!.trim();
     const itemContainerIds: string[] = [];
 
     // Step 1: Create 7 item containers
     for (const asset of campaign.renderedAssets) {
-      const publicImageUrl = `${hostUrl.replace(/\/$/, '')}${asset.url}`;
+      const cleanHost = hostUrl.replace(/\/$/, '');
+      const publicImageUrl = `${cleanHost}${asset.url}`;
 
       const itemRes = await fetch(
         `https://graph.facebook.com/v19.0/${igUserId}/media?image_url=${encodeURIComponent(
@@ -120,8 +179,27 @@ export async function publishToInstagram(campaignId: string): Promise<PublishRes
 
     const carouselContainerId = carouselData.id;
 
-    // Wait 2 seconds for Instagram media processing
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Step 2.5: Poll container status until Meta finishes processing the media items
+    let ready = false;
+    for (let attempt = 0; attempt < 8; attempt++) {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      try {
+        const checkRes = await fetch(
+          `https://graph.facebook.com/v19.0/${carouselContainerId}?fields=status_code,status&access_token=${token}`
+        );
+        const checkData = await checkRes.json();
+        if (checkData.status_code === 'FINISHED') {
+          ready = true;
+          break;
+        } else if (checkData.status_code === 'ERROR') {
+          throw new Error(`Meta media processing error: ${checkData.status || 'Media container processing failed'}`);
+        }
+      } catch (err: unknown) {
+        if (err instanceof Error && err.message.includes('Meta media processing error')) {
+          throw err;
+        }
+      }
+    }
 
     // Step 3: Publish Carousel Container
     const publishRes = await fetch(

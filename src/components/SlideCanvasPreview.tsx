@@ -40,7 +40,7 @@ export const SlideCanvasPreview: React.FC<SlideCanvasPreviewProps> = ({
   slide,
   theme,
   format,
-  businessName = 'ApexDoor Voice AI',
+  businessName = 'Stepstone AI Agency',
   demoPhone = '(844) 385-DOOR',
 }) => {
   // Theme color maps
@@ -137,7 +137,7 @@ export const SlideCanvasPreview: React.FC<SlideCanvasPreviewProps> = ({
       slide.highlightMetric?.value?.toLowerCase().includes('demo') ||
       slide.highlightMetric?.value?.includes('844'));
 
-  let footerLabel = 'apexdoorai.com';
+  let footerLabel = 'stepstoneai.agency';
   let buttonLabel = 'SWIPE';
   if (slide.slideNumber === 7) {
     if (isCalculatorCta) {
