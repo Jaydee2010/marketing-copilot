@@ -1,7 +1,13 @@
+import fs from 'fs';
+import path from 'path';
 import { Campaign, InstagramCredentials } from '../src/types/index';
 import { db } from './db';
 import { renderCampaignSlides } from './renderer';
 import { PublishResult } from './linkedin';
+
+const ASSETS_DIR = process.env.VERCEL
+  ? path.resolve('/tmp', 'data', 'assets')
+  : path.resolve(process.cwd(), 'data', 'assets');
 
 export interface InstagramVerifyResult {
   success: boolean;
@@ -58,7 +64,7 @@ export async function verifyInstagramCredentials(
 }
 
 export async function publishToInstagram(campaignId: string): Promise<PublishResult> {
-  const campaign = db.getCampaign(campaignId);
+  let campaign = db.getCampaign(campaignId);
   if (!campaign) {
     throw new Error(`Campaign ${campaignId} not found`);
   }
@@ -82,9 +88,23 @@ export async function publishToInstagram(campaignId: string): Promise<PublishRes
     };
   }
 
-  // Ensure assets are rendered
-  if (!campaign.renderedAssets || campaign.renderedAssets.length < 7) {
+  // Ensure assets are rendered AND physical files exist on disk
+  let needsRender = !campaign.renderedAssets || campaign.renderedAssets.length < 7;
+  if (!needsRender && campaign.renderedAssets) {
+    for (const asset of campaign.renderedAssets) {
+      const filePath = path.join(ASSETS_DIR, asset.filename || path.basename(asset.url));
+      if (!fs.existsSync(filePath)) {
+        needsRender = true;
+        break;
+      }
+    }
+  }
+
+  if (needsRender) {
+    console.log(`[Instagram] Rendering 7 high-res PNG slides on disk for campaign "${campaign.title}"...`);
     await renderCampaignSlides(campaign.id, campaign.platforms.instagram.format || 'portrait_4_5');
+    const fresh = db.getCampaign(campaign.id);
+    if (fresh) campaign = fresh;
   }
 
   // Preflight validation for Instagram
@@ -158,7 +178,10 @@ export async function publishToInstagram(campaignId: string): Promise<PublishRes
 
       const itemData = await itemRes.json();
       if (!itemRes.ok || !itemData.id) {
-        throw new Error(`Failed to create Instagram carousel item: ${itemData.error?.message || itemRes.statusText}`);
+        const errorDetail = itemData.error
+          ? `[Meta Error ${itemData.error.code || ''}${itemData.error.error_subcode ? ` / subcode ${itemData.error.error_subcode}` : ''}]: ${itemData.error.message || 'Image container creation failed'}`
+          : `HTTP ${itemRes.status} ${itemRes.statusText}`;
+        throw new Error(`Slide ${asset.slideIndex || itemContainerIds.length + 1} container failed (${publicImageUrl}): ${errorDetail}`);
       }
 
       itemContainerIds.push(itemData.id);
@@ -174,7 +197,10 @@ export async function publishToInstagram(campaignId: string): Promise<PublishRes
 
     const carouselData = await carouselRes.json();
     if (!carouselRes.ok || !carouselData.id) {
-      throw new Error(`Failed to create Instagram carousel container: ${carouselData.error?.message || carouselRes.statusText}`);
+      const errorDetail = carouselData.error
+        ? `[Meta Error ${carouselData.error.code || ''}]: ${carouselData.error.message || 'Carousel container creation failed'}`
+        : `HTTP ${carouselRes.status} ${carouselRes.statusText}`;
+      throw new Error(`Carousel container creation failed: ${errorDetail}`);
     }
 
     const carouselContainerId = carouselData.id;

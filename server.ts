@@ -527,6 +527,31 @@ app.get('/api/usage', (req, res) => {
 });
 
 async function startServer() {
+  // Pre-render slides for existing campaigns if missing on disk
+  try {
+    const campaigns = db.getCampaigns();
+    for (const c of campaigns) {
+      let needsRender = !c.renderedAssets || c.renderedAssets.length < 7;
+      if (!needsRender && c.renderedAssets) {
+        for (const a of c.renderedAssets) {
+          const filePath = path.join(ASSETS_DIR, a.filename || path.basename(a.url));
+          if (!fs.existsSync(filePath)) {
+            needsRender = true;
+            break;
+          }
+        }
+      }
+      if (needsRender) {
+        console.log(`[Startup] Pre-rendering PNG slides for campaign "${c.title}"...`);
+        renderCampaignSlides(c.id, 'portrait_4_5').catch((e) =>
+          console.warn(`[Startup] Failed to pre-render ${c.id}:`, e)
+        );
+      }
+    }
+  } catch (err) {
+    console.warn('[Startup] Slide pre-render scan warning:', err);
+  }
+
   // Start the background scheduler
   scheduler.start();
 

@@ -664,6 +664,21 @@ export const SlideStudioView: React.FC<SlideStudioViewProps> = ({
                   />
                 </div>
 
+                {localCampaign.platforms.instagram.lastError && (
+                  <div className="p-3.5 rounded-xl bg-red-950/40 border border-red-800/60 text-xs text-red-200 space-y-1.5 animate-in fade-in">
+                    <div className="flex items-center gap-1.5 font-bold text-red-400">
+                      <AlertTriangle className="w-4 h-4 shrink-0" />
+                      <span>Instagram Publishing Failed</span>
+                    </div>
+                    <p className="text-[11px] text-red-300 font-mono break-words leading-relaxed pl-5">
+                      {localCampaign.platforms.instagram.lastError}
+                    </p>
+                    <div className="pl-5 pt-1 text-[11px] text-slate-400">
+                      Verify your Instagram Business Account ID and Meta token permissions (<code className="text-pink-300">instagram_content_publish</code>) in Integrations.
+                    </div>
+                  </div>
+                )}
+
                 {localCampaign.platforms.instagram.externalPostUrl && (
                   <div className="p-3 rounded-xl bg-pink-950/30 border border-pink-500/30 flex items-center justify-between text-xs">
                     <span className="text-pink-300 font-medium">Published on Instagram</span>

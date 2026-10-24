@@ -262,8 +262,32 @@ export default function App() {
       setStatus(statusRes);
       setLogs(logsRes);
 
-      const msg = data.result?.linkedin?.message || data.result?.instagram?.message || 'Publish executed.';
-      showNotification(msg, 'success');
+      const liResult = data.result?.linkedin;
+      const igResult = data.result?.instagram;
+
+      if (platform === 'both') {
+        if (liResult?.success && igResult?.success) {
+          showNotification('Successfully published to both LinkedIn and Instagram!', 'success');
+        } else if (!liResult?.success && !igResult?.success) {
+          showNotification(`Publishing failed: Instagram: ${igResult?.message || 'Error'} | LinkedIn: ${liResult?.message || 'Error'}`, 'error');
+        } else if (liResult?.success && !igResult?.success) {
+          showNotification(`LinkedIn published, but Instagram failed: ${igResult?.message || 'Check credentials/permissions'}`, 'error');
+        } else {
+          showNotification(`Instagram published, but LinkedIn failed: ${liResult?.message || 'Check credentials'}`, 'error');
+        }
+      } else if (platform === 'instagram') {
+        if (igResult?.success) {
+          showNotification(igResult.message || 'Published to Instagram!', 'success');
+        } else {
+          showNotification(`Instagram failed: ${igResult?.message || 'Check Meta permissions'}`, 'error');
+        }
+      } else {
+        if (liResult?.success) {
+          showNotification(liResult.message || 'Published to LinkedIn!', 'success');
+        } else {
+          showNotification(`LinkedIn failed: ${liResult?.message || 'Check LinkedIn OAuth'}`, 'error');
+        }
+      }
     } catch (err: any) {
       showNotification(`Publishing error: ${err.message}`, 'error');
     } finally {

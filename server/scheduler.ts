@@ -1,7 +1,13 @@
+import fs from 'fs';
+import path from 'path';
 import { db } from './db';
 import { publishToLinkedIn } from './linkedin';
 import { publishToInstagram } from './instagram';
 import { renderCampaignSlides } from './renderer';
+
+const ASSETS_DIR = process.env.VERCEL
+  ? path.resolve('/tmp', 'data', 'assets')
+  : path.resolve(process.cwd(), 'data', 'assets');
 
 class AutopilotScheduler {
   private timer: NodeJS.Timeout | null = null;
@@ -131,8 +137,19 @@ class AutopilotScheduler {
     const campaign = db.getCampaign(campaignId);
     if (!campaign) throw new Error('Campaign not found');
 
-    // Ensure slides are rendered
-    if (!campaign.renderedAssets || campaign.renderedAssets.length < 7) {
+    // Ensure slides are rendered AND exist physically on disk
+    let needsRender = !campaign.renderedAssets || campaign.renderedAssets.length < 7;
+    if (!needsRender && campaign.renderedAssets) {
+      for (const asset of campaign.renderedAssets) {
+        const filePath = path.join(ASSETS_DIR, asset.filename || path.basename(asset.url));
+        if (!fs.existsSync(filePath)) {
+          needsRender = true;
+          break;
+        }
+      }
+    }
+
+    if (needsRender) {
       await renderCampaignSlides(campaign.id, 'portrait_4_5');
     }
 

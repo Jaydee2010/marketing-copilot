@@ -381,6 +381,51 @@ export const CockpitView: React.FC<CockpitViewProps> = ({
                         </span>
                       )}
                     </div>
+
+                    {/* Platform Failure Diagnostics */}
+                    {ig.status === 'failed' && (
+                      <div className="mt-2.5 p-3 rounded-xl bg-red-950/40 border border-red-800/60 text-xs text-red-200 space-y-1 animate-in fade-in">
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <div className="flex items-center gap-1.5 font-bold text-red-400">
+                            <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                            <span>Instagram Publish Error</span>
+                          </div>
+                          <button
+                            onClick={() => handlePublish(campaign.id, 'instagram')}
+                            disabled={isProcessing || loadingAction}
+                            className="px-2.5 py-1 rounded-lg bg-red-900/60 hover:bg-red-800 text-white font-bold text-[11px] flex items-center gap-1 transition-all cursor-pointer"
+                          >
+                            <RefreshCw className="w-3 h-3" />
+                            <span>Retry Instagram</span>
+                          </button>
+                        </div>
+                        <p className="text-[11px] text-red-300 font-mono break-words leading-relaxed">
+                          {ig.lastError || 'Meta Graph API rejected the carousel publishing request. Check your access token and permissions in Integrations.'}
+                        </p>
+                      </div>
+                    )}
+
+                    {li.status === 'failed' && (
+                      <div className="mt-2.5 p-3 rounded-xl bg-red-950/40 border border-red-800/60 text-xs text-red-200 space-y-1 animate-in fade-in">
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <div className="flex items-center gap-1.5 font-bold text-red-400">
+                            <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                            <span>LinkedIn Publish Error</span>
+                          </div>
+                          <button
+                            onClick={() => handlePublish(campaign.id, 'linkedin')}
+                            disabled={isProcessing || loadingAction}
+                            className="px-2.5 py-1 rounded-lg bg-red-900/60 hover:bg-red-800 text-white font-bold text-[11px] flex items-center gap-1 transition-all cursor-pointer"
+                          >
+                            <RefreshCw className="w-3 h-3" />
+                            <span>Retry LinkedIn</span>
+                          </button>
+                        </div>
+                        <p className="text-[11px] text-red-300 font-mono break-words leading-relaxed">
+                          {li.lastError || 'LinkedIn API upload rejected. Check your token in Integrations.'}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
