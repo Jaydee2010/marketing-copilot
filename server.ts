@@ -527,67 +527,65 @@ app.get('/api/usage', (req, res) => {
 });
 
 async function startServer() {
-  // Pre-render slides for existing campaigns if missing on disk
-  try {
-    const campaigns = db.getCampaigns();
-    for (const c of campaigns) {
-      let needsRender = !c.renderedAssets || c.renderedAssets.length < 7;
-      if (!needsRender && c.renderedAssets) {
-        for (const a of c.renderedAssets) {
-          const filePath = path.join(ASSETS_DIR, a.filename || path.basename(a.url));
-          if (!fs.existsSync(filePath)) {
-            needsRender = true;
-            break;
-          }
-        }
-      }
-      if (needsRender) {
-        console.log(`[Startup] Pre-rendering PNG slides for campaign "${c.title}"...`);
-        renderCampaignSlides(c.id, 'portrait_4_5').catch((e) =>
-          console.warn(`[Startup] Failed to pre-render ${c.id}:`, e)
-        );
-      }
-    }
-  } catch (err) {
-    console.warn('[Startup] Slide pre-render scan warning:', err);
-  }
-
-  // Start the background scheduler
+  // Start the background scheduler (tick checks every 30s)
   scheduler.start();
 
+  const distCandidate = path.resolve(process.cwd(), 'dist');
   const isProd =
     process.env.NODE_ENV === 'production' ||
     !!process.env.RENDER ||
-    fs.existsSync(path.resolve(process.cwd(), 'dist', 'index.html'));
+    fs.existsSync(path.join(distCandidate, 'index.html'));
 
-  // If in development mode, hook up Vite middleware
+  // If in development mode and Vite can run, mount Vite middleware
   if (!isProd) {
-    const { createServer: createViteServer } = await import('vite');
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
-    });
-    app.use(vite.middlewares);
+    try {
+      const { createServer: createViteServer } = await import('vite');
+      const vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: 'spa',
+      });
+      app.use(vite.middlewares);
+    } catch (viteErr) {
+      console.warn('[Server] Could not start Vite dev middleware, falling back to static dist:', viteErr);
+      serveStaticDist();
+    }
   } else {
-    // Production static serving
-    const distPath = path.resolve(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (_req, res) => {
-      const indexFile = path.resolve(distPath, 'index.html');
-      if (fs.existsSync(indexFile)) {
-        res.sendFile(indexFile);
-      } else {
-        res.status(200).send(`
-          <!DOCTYPE html>
-          <html>
-            <head><title>AI Marketing Autopilot</title></head>
-            <body style="font-family:sans-serif;padding:40px;background:#0f172a;color:#f8fafc;">
-              <h2>App is starting up...</h2>
-              <p>Dist assets are building. Please refresh in a few moments.</p>
-            </body>
-          </html>
-        `);
+    serveStaticDist();
+  }
+
+  function serveStaticDist() {
+    let distPath = path.resolve(process.cwd(), 'dist');
+    if (!fs.existsSync(path.join(distPath, 'index.html'))) {
+      if (fs.existsSync(path.resolve(process.cwd(), 'index.html'))) {
+        distPath = process.cwd();
       }
+    }
+
+    app.use(express.static(distPath));
+
+    app.get('*', (_req, res) => {
+      const candidates = [
+        path.join(distPath, 'index.html'),
+        path.resolve(process.cwd(), 'dist', 'index.html'),
+        path.resolve(process.cwd(), 'index.html'),
+      ];
+
+      for (const cand of candidates) {
+        if (fs.existsSync(cand)) {
+          return res.sendFile(cand);
+        }
+      }
+
+      res.status(200).send(`
+        <!DOCTYPE html>
+        <html>
+          <head><title>Stepstone AI Agency - Autopilot</title></head>
+          <body style="font-family:sans-serif;padding:40px;background:#0f172a;color:#f8fafc;">
+            <h2>Stepstone AI Agency Autopilot</h2>
+            <p>Dist assets are initializing. Please refresh in a moment.</p>
+          </body>
+        </html>
+      `);
     });
   }
 
