@@ -141,17 +141,17 @@ export const SlideCanvasPreview: React.FC<SlideCanvasPreviewProps> = ({
   let buttonLabel = 'SWIPE';
   if (slide.slideNumber === 7) {
     if (isCalculatorCta) {
-      footerLabel = 'https://garage-door-lost-revenue-caculator.vercel.app/';
-      buttonLabel = 'RUN YOUR NUMBERS';
+      footerLabel = 'Tap link in bio or DM "CALC" for direct link';
+      buttonLabel = '🔗 LINK IN BIO';
     } else if (isDmCalculator) {
-      footerLabel = 'DM "CALCULATOR" for free calculator';
+      footerLabel = 'DM "CALCULATOR" for the free revenue estimator';
       buttonLabel = 'DM "CALCULATOR"';
     } else if (isDemoCta) {
-      footerLabel = 'Link in bio to call 24/7 demo agent';
-      buttonLabel = 'TRY LIVE DEMO';
+      footerLabel = 'Tap link in bio to test the 24/7 demo agent';
+      buttonLabel = '🔗 LINK IN BIO';
     } else {
       footerLabel = 'DM me and let’s talk missed calls';
-      buttonLabel = 'LET’S TALK';
+      buttonLabel = 'LET’S TALK 💬';
     }
   }
 

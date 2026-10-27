@@ -44,13 +44,16 @@ class AutopilotScheduler {
     const campaigns = db.getCampaigns();
     const now = new Date();
 
-    const formatter = new Intl.DateTimeFormat('en-US', {
+    const parts = new Intl.DateTimeFormat('en-US', {
       timeZone: schedule.timezone,
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    });
-    const currentTzTime = formatter.format(now);
+      hour: 'numeric',
+      minute: 'numeric',
+      hourCycle: 'h23',
+    }).formatToParts(now);
+
+    const hour = parseInt(parts.find((p) => p.type === 'hour')?.value || '0', 10);
+    const minute = parseInt(parts.find((p) => p.type === 'minute')?.value || '0', 10);
+    const currentTzTime = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
 
     const pendingCount = campaigns.filter(
       (c) =>
@@ -79,52 +82,88 @@ class AutopilotScheduler {
       const campaigns = db.getCampaigns();
       const now = new Date();
 
-      // Format current time in user's configured timezone: e.g. "08:15"
-      const formatter = new Intl.DateTimeFormat('en-US', {
+      // Extract current hour and minute in user's configured timezone
+      const parts = new Intl.DateTimeFormat('en-US', {
         timeZone: schedule.timezone,
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-      });
-      const currentTimeSlot = formatter.format(now);
+        hour: 'numeric',
+        minute: 'numeric',
+        hourCycle: 'h23',
+      }).formatToParts(now);
 
-      for (const campaign of campaigns) {
-        // If autoPublish is enabled and this campaign matches the scheduled time slot or is due
-        const liStatus = campaign.platforms.linkedin.status;
-        const igStatus = campaign.platforms.instagram.status;
+      const hour = parseInt(parts.find((p) => p.type === 'hour')?.value || '0', 10);
+      const minute = parseInt(parts.find((p) => p.type === 'minute')?.value || '0', 10);
+      const currentTotalMinutes = hour * 60 + minute;
+      const currentTimeSlot = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
 
-        const isDueTime = campaign.scheduledTime === currentTimeSlot;
+      // Target active queue (the 4 daily target posts)
+      const queueCampaigns = campaigns.slice(0, schedule.dailyTargetPosts || 4);
 
-        // If campaign is scheduled and due, or user triggered autoPublish
-        if (schedule.autoPublishEnabled && isDueTime) {
-          // Pre-render slides if needed
-          if (!campaign.renderedAssets || campaign.renderedAssets.length < 7) {
-            try {
-              await renderCampaignSlides(campaign.id, 'portrait_4_5');
-            } catch (renderErr) {
-              console.error(`Failed to render slides for ${campaign.id}:`, renderErr);
-              continue;
-            }
-          }
+      for (let i = 0; i < queueCampaigns.length; i++) {
+        const campaign = queueCampaigns[i];
+        const assignedSlot =
+          campaign.scheduledTime ||
+          schedule.dailySlots[i % schedule.dailySlots.length] ||
+          '08:15';
+        const [slotH, slotM] = assignedSlot.split(':').map((v) => parseInt(v, 10) || 0);
+        const slotTotalMinutes = slotH * 60 + slotM;
 
-          // Publish to LinkedIn
-          if (
-            campaign.platforms.linkedin.enabled &&
-            !schedule.linkedinPaused &&
-            (liStatus === 'scheduled' || liStatus === 'draft')
-          ) {
-            console.log(`[Scheduler] Auto-publishing campaign "${campaign.title}" to LinkedIn...`);
-            await publishToLinkedIn(campaign.id);
-          }
+        // Is this slot due or overdue?
+        // Slot is due if current timezone time is >= scheduled slot time
+        const isSlotDue = currentTotalMinutes >= slotTotalMinutes;
 
-          // Publish to Instagram
-          if (
-            campaign.platforms.instagram.enabled &&
+        const liStatus = campaign.platforms?.linkedin?.status;
+        const igStatus = campaign.platforms?.instagram?.status;
+
+        // Check if already published
+        const isIgPublished = igStatus === 'published';
+        const isLiPublished = liStatus === 'published';
+
+        if (schedule.autoPublishEnabled && isSlotDue) {
+          // Instagram Auto-Publishing check
+          const canPublishIg =
+            campaign.platforms?.instagram?.enabled &&
             !schedule.instagramPaused &&
-            (igStatus === 'scheduled' || igStatus === 'draft')
-          ) {
-            console.log(`[Scheduler] Auto-publishing campaign "${campaign.title}" to Instagram...`);
-            await publishToInstagram(campaign.id);
+            !isIgPublished &&
+            igStatus !== 'publishing' &&
+            (campaign.platforms.instagram.retryCount || 0) < 3;
+
+          // LinkedIn Auto-Publishing check
+          const canPublishLi =
+            campaign.platforms?.linkedin?.enabled &&
+            !schedule.linkedinPaused &&
+            !isLiPublished &&
+            liStatus !== 'publishing' &&
+            (campaign.platforms.linkedin.retryCount || 0) < 3;
+
+          if (canPublishIg || canPublishLi) {
+            console.log(
+              `[Scheduler] Slot ${assignedSlot} is DUE (Current ${schedule.timezone} time: ${currentTimeSlot}). Auto-publishing campaign "${campaign.title}"...`
+            );
+
+            // Pre-render slides if needed
+            if (!campaign.renderedAssets || campaign.renderedAssets.length < 7) {
+              try {
+                await renderCampaignSlides(campaign.id, 'portrait_4_5');
+              } catch (renderErr) {
+                console.error(`[Scheduler] Failed to pre-render slides for ${campaign.id}:`, renderErr);
+                continue;
+              }
+            }
+
+            // Publish to Instagram
+            if (canPublishIg) {
+              console.log(`[Scheduler] Auto-publishing to Instagram for slot ${assignedSlot}...`);
+              await publishToInstagram(campaign.id);
+            }
+
+            // Publish to LinkedIn
+            if (canPublishLi) {
+              console.log(`[Scheduler] Auto-publishing to LinkedIn for slot ${assignedSlot}...`);
+              await publishToLinkedIn(campaign.id);
+            }
+
+            // Brief pause between posts to respect platform rate limits
+            await new Promise((resolve) => setTimeout(resolve, 3000));
           }
         }
       }

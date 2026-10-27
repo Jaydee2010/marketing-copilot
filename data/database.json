@@ -163,7 +163,7 @@
           "slideNumber": 1,
           "headline": "Dave Was Halfway Through a Spring Replacement",
           "bodyText": "His phone buzzed in his pocket. He was on a 10-foot ladder with winding bars in hand.",
-          "supportingLabel": "SCENE 01 // THE HOOK",
+          "supportingLabel": "FIELD REALITY",
           "layoutType": "hook_title",
           "icon": "wrench",
           "highlightMetric": {
@@ -173,9 +173,9 @@
         },
         {
           "slideNumber": 2,
-          "headline": "The Real-Life Moment: A Trapped Car Across Town",
+          "headline": "A Trapped Car Across Town",
           "bodyText": "A homeowner in Westlake just heard a gunshot sound in her garage. Her minivan is stuck inside and she has a 9:00 AM meeting.",
-          "supportingLabel": "SCENE 02 // REALITY",
+          "supportingLabel": "EMERGENCY DISPATCH",
           "layoutType": "problem_stat",
           "icon": "alert-triangle",
           "bulletPoints": [
@@ -186,9 +186,9 @@
         },
         {
           "slideNumber": 3,
-          "headline": "The Consequence: She Doesn’t Leave a Voicemail",
+          "headline": "She Doesn’t Leave a Voicemail",
           "bodyText": "Homeowners with trapped vehicles don’t wait for callbacks. She taps the next sponsored listing.",
-          "supportingLabel": "SCENE 03 // CONSEQUENCE",
+          "supportingLabel": "REVENUE LEAK",
           "layoutType": "breakdown_list",
           "icon": "phone-missed",
           "highlightMetric": {
@@ -203,9 +203,9 @@
         },
         {
           "slideNumber": 4,
-          "headline": "The Business Insight: Lead Gen Isn’t The Problem",
+          "headline": "Lead Gen Isn’t The Problem",
           "bodyText": "Dave spent money on Google Ads to generate that call. But generating leads means nothing if nobody is free to answer them.",
-          "supportingLabel": "SCENE 04 // INSIGHT",
+          "supportingLabel": "CONTRACTOR MATH",
           "layoutType": "solution_feature",
           "icon": "trending-up",
           "bulletPoints": [
@@ -216,9 +216,9 @@
         },
         {
           "slideNumber": 5,
-          "headline": "The Practical Change: Quiet Call Handling",
+          "headline": "Quiet Call Handling",
           "bodyText": "An intelligent voice system answers on ring 2 with Dave’s company greeting and handles the triage.",
-          "supportingLabel": "SCENE 05 // THE PROCESS",
+          "supportingLabel": "AI CALL INTAKE",
           "layoutType": "call_flow",
           "icon": "bot",
           "bulletPoints": [
@@ -230,9 +230,9 @@
         },
         {
           "slideNumber": 6,
-          "headline": "The Outcome: Dave Books The Job While on The Ladder",
+          "headline": "Dave Books The Job While on The Ladder",
           "bodyText": "Dave didn’t drop his tools. He didn’t lose his concentration. He simply wrapped up his repair and headed to the next booked ticket.",
-          "supportingLabel": "SCENE 06 // OUTCOME",
+          "supportingLabel": "OWNER FREEDOM",
           "layoutType": "metrics_grid",
           "icon": "shield-check",
           "highlightMetric": {
@@ -249,7 +249,7 @@
           "slideNumber": 7,
           "headline": "How Much Are Missed Calls Costing You?",
           "bodyText": "Stop guessing. Plug your own company numbers into our free garage door revenue-loss calculator:",
-          "supportingLabel": "SCENE 07 // RUN YOUR NUMBERS",
+          "supportingLabel": "REVENUE AUDIT",
           "layoutType": "cta_action",
           "icon": "dollar-sign",
           "highlightMetric": {
@@ -377,7 +377,7 @@
           "slideNumber": 1,
           "headline": "It’s 11:07 P.M. A Garage Door Won’t Close.",
           "bodyText": "Your phone buzzes on the nightstand. You’ve been asleep for 45 minutes after a 10-hour shift.",
-          "supportingLabel": "SCENE 01 // THE NIGHT CALL",
+          "supportingLabel": "FIELD REALITY",
           "layoutType": "hook_title",
           "icon": "moon",
           "highlightMetric": {
@@ -389,7 +389,7 @@
           "slideNumber": 2,
           "headline": "The Real-Life Dilemma: Answer or Sleep?",
           "bodyText": "A homeowner just got home from the airport. Their garage door reversed and stopped 3 feet open. Their house is exposed to the street.",
-          "supportingLabel": "SCENE 02 // DILEMMA",
+          "supportingLabel": "EMERGENCY DISPATCH",
           "layoutType": "problem_stat",
           "icon": "alert-triangle",
           "bulletPoints": [
@@ -400,9 +400,9 @@
         },
         {
           "slideNumber": 3,
-          "headline": "The Consequence: Constant Owner Exhaustion",
+          "headline": "Constant Owner Exhaustion",
           "bodyText": "Being 24/7 on-call means you never actually leave work. Even dinner with your kids is shadowed by the next ring.",
-          "supportingLabel": "SCENE 03 // BURNOUT",
+          "supportingLabel": "REVENUE LEAK",
           "layoutType": "breakdown_list",
           "icon": "clock",
           "highlightMetric": {
@@ -417,9 +417,9 @@
         },
         {
           "slideNumber": 4,
-          "headline": "The Business Insight: Triage is The Missing Link",
+          "headline": "Triage is The Missing Link",
           "bodyText": "Not every midnight call requires a truck roll. But every midnight caller needs immediate reassurance and clear direction.",
-          "supportingLabel": "SCENE 04 // INSIGHT",
+          "supportingLabel": "CONTRACTOR MATH",
           "layoutType": "solution_feature",
           "icon": "shield-check",
           "bulletPoints": [
@@ -430,9 +430,9 @@
         },
         {
           "slideNumber": 5,
-          "headline": "The Practical Change: Automated Night Triage",
+          "headline": "Automated Night Triage",
           "bodyText": "An intelligent voice system answers immediately, speaks in a calm, professional tone, and follows your exact rules.",
-          "supportingLabel": "SCENE 05 // SYSTEM",
+          "supportingLabel": "AI CALL INTAKE",
           "layoutType": "call_flow",
           "icon": "bot",
           "bulletPoints": [
@@ -444,9 +444,9 @@
         },
         {
           "slideNumber": 6,
-          "headline": "The Outcome: Sleep Through The Night Peacefully",
+          "headline": "Sleep Through The Night Peacefully",
           "bodyText": "Wake up to organized jobs, qualified customer notes, and zero midnight phone anxiety.",
-          "supportingLabel": "SCENE 06 // FREEDOM",
+          "supportingLabel": "OWNER FREEDOM",
           "layoutType": "metrics_grid",
           "icon": "check-circle-2",
           "highlightMetric": {
@@ -463,7 +463,7 @@
           "slideNumber": 7,
           "headline": "Want to Run Your Garage Door Business Numbers?",
           "bodyText": "DM me CALCULATOR and I’ll send you the free garage door revenue-loss calculator.",
-          "supportingLabel": "SCENE 07 // NEXT STEP",
+          "supportingLabel": "REVENUE AUDIT",
           "layoutType": "cta_action",
           "icon": "message-square",
           "highlightMetric": {
@@ -590,7 +590,7 @@
           "slideNumber": 1,
           "headline": "If You Got Two Hours a Day Back...",
           "bodyText": "What would you do with them? Spend time with family? Work on bigger installs? Or finally take a real weekend off?",
-          "supportingLabel": "SCENE 01 // OWNER FREEDOM",
+          "supportingLabel": "FIELD REALITY",
           "layoutType": "hook_title",
           "icon": "clock",
           "highlightMetric": {
@@ -600,9 +600,9 @@
         },
         {
           "slideNumber": 2,
-          "headline": "The Real-Life Moment: The 5:30 P.M. Notepad",
+          "headline": "The 5:30 P.M. Notepad",
           "bodyText": "You wrap up your last job, pack your winding bars, and sit in your truck. Your phone shows 8 missed calls and 5 voicemails.",
-          "supportingLabel": "SCENE 02 // THE DAILY GRIND",
+          "supportingLabel": "EMERGENCY DISPATCH",
           "layoutType": "problem_stat",
           "icon": "phone-missed",
           "bulletPoints": [
@@ -614,9 +614,9 @@
         },
         {
           "slideNumber": 3,
-          "headline": "The Consequence: The Voicemail Tax on Your Life",
+          "headline": "The Voicemail Tax on Your Life",
           "bodyText": "You didn’t start a garage door business to become a full-time phone operator. But the phone runs your entire personal schedule.",
-          "supportingLabel": "SCENE 03 // PERSONAL COST",
+          "supportingLabel": "REVENUE LEAK",
           "layoutType": "breakdown_list",
           "icon": "alert-triangle",
           "highlightMetric": {
@@ -631,9 +631,9 @@
         },
         {
           "slideNumber": 4,
-          "headline": "The Business Insight: Routine Intake Can Be Automated",
+          "headline": "Routine Intake Can Be Automated",
           "bodyText": "Qualifying whether someone needs an 8x7 spring or a LiftMaster gear kit doesn’t require the owner’s personal voice on every call.",
-          "supportingLabel": "SCENE 04 // THE INSIGHT",
+          "supportingLabel": "CONTRACTOR MATH",
           "layoutType": "solution_feature",
           "icon": "bot",
           "bulletPoints": [
@@ -644,9 +644,9 @@
         },
         {
           "slideNumber": 5,
-          "headline": "The Practical Change: Answering on Ring 2",
+          "headline": "Answering on Ring 2",
           "bodyText": "A specialized garage door voice system collects the customer’s issue and contact info, qualifies the inquiry, and routes details.",
-          "supportingLabel": "SCENE 05 // SYSTEM",
+          "supportingLabel": "AI CALL INTAKE",
           "layoutType": "call_flow",
           "icon": "calendar-check",
           "bulletPoints": [
@@ -657,9 +657,9 @@
         },
         {
           "slideNumber": 6,
-          "headline": "The Outcome: Walk in The Front Door at 5:30 P.M.",
+          "headline": "Walk in The Front Door at 5:30 P.M.",
           "bodyText": "Put your keys on the counter. Have dinner without looking at your screen every 3 minutes. Your jobs are already booked.",
-          "supportingLabel": "SCENE 06 // THE OUTCOME",
+          "supportingLabel": "OWNER FREEDOM",
           "layoutType": "metrics_grid",
           "icon": "check-circle-2",
           "highlightMetric": {
@@ -676,7 +676,7 @@
           "slideNumber": 7,
           "headline": "Estimate Your Potential Revenue Gap",
           "bodyText": "Find out what unanswered calls and callback delays could be costing your garage door business:",
-          "supportingLabel": "SCENE 07 // CALCULATOR",
+          "supportingLabel": "REVENUE AUDIT",
           "layoutType": "cta_action",
           "icon": "dollar-sign",
           "highlightMetric": {
@@ -804,7 +804,7 @@
           "slideNumber": 1,
           "headline": "You Paid $65 for The Lead.",
           "bodyText": "Who answered the phone when the homeowner called at 3:15 p.m.?",
-          "supportingLabel": "SCENE 01 // AD WASTE",
+          "supportingLabel": "FIELD REALITY",
           "layoutType": "hook_title",
           "icon": "trending-up",
           "highlightMetric": {
@@ -814,9 +814,9 @@
         },
         {
           "slideNumber": 2,
-          "headline": "The Real-Life Moment: The Highway Ring",
+          "headline": "The Highway Ring",
           "bodyText": "Your lead alert dings while your technician is driving 65 mph on the freeway between jobs.",
-          "supportingLabel": "SCENE 02 // IN TRANSIT",
+          "supportingLabel": "EMERGENCY DISPATCH",
           "layoutType": "problem_stat",
           "icon": "car",
           "bulletPoints": [
@@ -827,9 +827,9 @@
         },
         {
           "slideNumber": 3,
-          "headline": "The Consequence: Paying for Your Competitor’s Job",
+          "headline": "Paying for Your Competitor’s Job",
           "bodyText": "The homeowner doesn’t leave a voicemail. They tap the next contractor listed on Google.",
-          "supportingLabel": "SCENE 03 // THE LEAK",
+          "supportingLabel": "REVENUE LEAK",
           "layoutType": "breakdown_list",
           "icon": "dollar-sign",
           "highlightMetric": {
@@ -844,9 +844,9 @@
         },
         {
           "slideNumber": 4,
-          "headline": "The Business Insight: Ad Spend Doesn’t Fix Intake",
+          "headline": "Ad Spend Doesn’t Fix Intake",
           "bodyText": "Pumping more money into advertising with a leaky call-handling bucket just accelerates wasted budget.",
-          "supportingLabel": "SCENE 04 // THE INSIGHT",
+          "supportingLabel": "CONTRACTOR MATH",
           "layoutType": "solution_feature",
           "icon": "help-circle",
           "bulletPoints": [
@@ -857,9 +857,9 @@
         },
         {
           "slideNumber": 5,
-          "headline": "The Practical Change: Instant Call Capture",
+          "headline": "Instant Call Capture",
           "bodyText": "Calls are answered on ring 2 by an intelligent system trained specifically on garage door repair dispatching.",
-          "supportingLabel": "SCENE 05 // THE FIX",
+          "supportingLabel": "AI CALL INTAKE",
           "layoutType": "call_flow",
           "icon": "bot",
           "bulletPoints": [
@@ -870,9 +870,9 @@
         },
         {
           "slideNumber": 6,
-          "headline": "The Outcome: Every Ad Dollar Delivers a Booking",
+          "headline": "Every Ad Dollar Delivers a Booking",
           "bodyText": "Stop lighting advertising budget on fire. Turn the calls you are already paying for into confirmed truck rolls.",
-          "supportingLabel": "SCENE 06 // ROI",
+          "supportingLabel": "OWNER FREEDOM",
           "layoutType": "metrics_grid",
           "icon": "check-circle-2",
           "highlightMetric": {
@@ -889,7 +889,7 @@
           "slideNumber": 7,
           "headline": "Hear How An AI Voice Agent Handles Garage Door Calls",
           "bodyText": "Want to hear how an AI voice agent handles garage door calls? Go to the link in my bio and call the demo yourself.",
-          "supportingLabel": "SCENE 07 // TEST IT LIVE",
+          "supportingLabel": "REVENUE AUDIT",
           "layoutType": "cta_action",
           "icon": "phone-call",
           "highlightMetric": {
@@ -1045,7 +1045,7 @@
     "todayPostsInstagram": 0,
     "todayRenderedAssetsCount": 0,
     "totalAssetsDiskBytes": 1606236,
-    "lastQuotaResetDate": "2026-10-23",
+    "lastQuotaResetDate": "2026-10-24",
     "maxDailyGeminiRequests": 50,
     "maxDailyPostsPerPlatform": 4
   }

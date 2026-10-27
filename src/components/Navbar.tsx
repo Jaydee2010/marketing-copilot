@@ -12,6 +12,7 @@ import {
   Clock,
   Sparkles,
   Bot,
+  CheckCircle2,
 } from 'lucide-react';
 import { AppServerStatus } from '../types/index';
 
@@ -124,6 +125,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <nav className="flex items-center space-x-1 sm:space-x-4 overflow-x-auto py-2 scrollbar-none">
           {[
             { id: 'cockpit', label: 'Cockpit & Queue', icon: LayoutDashboard },
+            { id: 'published', label: 'Published Posts', icon: CheckCircle2 },
             { id: 'campaigns', label: '7-Slide Studio', icon: Layers },
             { id: 'calendar', label: 'Calendar & Slots', icon: Calendar },
             { id: 'strategy', label: 'Marketing Strategy', icon: Settings2 },

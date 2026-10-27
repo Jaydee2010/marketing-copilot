@@ -21,6 +21,7 @@ import { CalendarView } from './components/CalendarView';
 import { StrategyView } from './components/StrategyView';
 import { IntegrationsView } from './components/IntegrationsView';
 import { QuotasView } from './components/QuotasView';
+import { PublishedPostsView } from './components/PublishedPostsView';
 import { GenerateModal } from './components/GenerateModal';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 
@@ -472,6 +473,17 @@ export default function App() {
                 onToggleSchedule={handleToggleSchedule}
                 onEnforceCtas={handleEnforceCtas}
                 loadingAction={actionLoading}
+              />
+            )}
+
+            {activeTab === 'published' && (
+              <PublishedPostsView
+                campaigns={campaigns}
+                onSelectCampaign={(id) => {
+                  setSelectedCampaignId(id);
+                  setActiveTab('campaigns');
+                }}
+                onGoToCockpit={() => setActiveTab('cockpit')}
               />
             )}
 

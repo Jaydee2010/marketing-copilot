@@ -126,16 +126,19 @@ export const CockpitView: React.FC<CockpitViewProps> = ({
           <div className="flex items-center justify-between text-slate-400 text-xs font-semibold mb-2">
             <span>SERVER SCHEDULER</span>
             <span className={`font-mono text-xs font-bold ${isGlobalPaused ? 'text-red-400' : isAutoEnabled ? 'text-emerald-400' : 'text-amber-400'}`}>
-              {isGlobalPaused ? 'HALTED' : isAutoEnabled ? 'RUNNING' : 'STANDBY'}
+              {isGlobalPaused ? 'HALTED' : isAutoEnabled ? 'AUTO-ACTIVE' : 'DRAFT MODE'}
             </span>
           </div>
-          <div className="text-2xl font-black text-white tracking-tight">
-            {isAutoEnabled ? 'Automatic' : 'Draft First'}
+          <div className="text-2xl font-black text-white tracking-tight flex items-baseline justify-between">
+            <span>{isAutoEnabled ? 'Automatic' : 'Draft First'}</span>
+            <span className="text-xs font-mono text-amber-400 font-bold">
+              {status?.currentTzTime || '--:--'}
+            </span>
           </div>
           <p className="text-[11px] text-slate-400 mt-2">
             {isAutoEnabled
-              ? 'Scheduler automatically executes when slot arrives.'
-              : 'Posts remain in review mode until manually approved or auto enabled.'}
+              ? `Auto-publishes slots once time arrives (${status?.timezone || 'America/Chicago'}).`
+              : 'Auto-publish is OFF. Toggle switch below to publish when due.'}
           </p>
         </div>
 

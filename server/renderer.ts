@@ -148,6 +148,42 @@ function getThemePalette(theme: SlideTheme): ThemePalette {
   }
 }
 
+function cleanSupportingBadge(rawLabel: string, slideNumber: number): string {
+  const upper = (rawLabel || '').toUpperCase();
+  if (upper.includes('SCENE 01') || upper.includes('HOOK')) return 'FIELD REALITY';
+  if (upper.includes('SCENE 02') || upper.includes('REALITY') || upper.includes('EMERGENCY')) return 'EMERGENCY DISPATCH';
+  if (upper.includes('SCENE 03') || upper.includes('CONSEQUENCE') || upper.includes('LEAK')) return 'REVENUE LEAK';
+  if (upper.includes('SCENE 04') || upper.includes('INSIGHT') || upper.includes('MATH')) return 'CONTRACTOR MATH';
+  if (upper.includes('SCENE 05') || upper.includes('PROCESS') || upper.includes('INTAKE')) return 'AI CALL INTAKE';
+  if (upper.includes('SCENE 06') || upper.includes('OUTCOME') || upper.includes('FREEDOM')) return 'OWNER FREEDOM';
+  if (upper.includes('SCENE 07') || upper.includes('NEXT STEP') || upper.includes('CTA') || upper.includes('CALCULATOR') || upper.includes('NUMBERS')) return 'REVENUE AUDIT';
+
+  const cleaned = (rawLabel || '')
+    .replace(/^scene\s*\d+\s*(\/\/|:|-)\s*/i, '')
+    .replace(/^(the hook|the real-life moment|the consequence|the business insight|the practical process change|the practical change|the owner's outcome|the outcome|the process|hook|consequence|process|outcome):\s*/i, '')
+    .trim();
+
+  if (cleaned.length > 2) return cleaned.toUpperCase();
+
+  const defaults = [
+    'FIELD REALITY',
+    'EMERGENCY DISPATCH',
+    'REVENUE LEAK',
+    'CONTRACTOR MATH',
+    'AI CALL INTAKE',
+    'OWNER FREEDOM',
+    'REVENUE AUDIT',
+  ];
+  return defaults[slideNumber - 1] || 'CONTRACTOR OPERATIONS';
+}
+
+function cleanSlideHeadline(rawHeadline: string): string {
+  return (rawHeadline || '')
+    .replace(/^(scene\s*\d+\s*(\/\/|:|-)\s*)/i, '')
+    .replace(/^(the hook|the real-life moment|the consequence|the business insight|the practical process change|the practical change|the owner's outcome|the outcome|the process|hook|consequence|process|outcome):\s*/i, '')
+    .trim();
+}
+
 export function generateSlideSvg(
   slide: Slide,
   theme: SlideTheme,
@@ -160,8 +196,10 @@ export function generateSlideSvg(
   const height = format === 'portrait_4_5' ? 1350 : 1080;
   const palette = getThemePalette(theme);
 
-  const headlineLines = wrapText(slide.headline, 28);
+  const cleanedHeadline = cleanSlideHeadline(slide.headline);
+  const headlineLines = wrapText(cleanedHeadline, 28);
   const bodyLines = wrapText(slide.bodyText, 40);
+  const badgeLabel = cleanSupportingBadge(slide.supportingLabel, slide.slideNumber);
 
   // Background grid and theme-specific decorative styling
   const patternDefs = `
@@ -213,11 +251,12 @@ export function generateSlideSvg(
 
   // Supporting Badge (Top of Content)
   const badgeY = 190;
+  const badgeWidth = Math.min(480, (badgeLabel.length * 11) + 48);
   const badge = `
     <g transform="translate(80, ${badgeY})">
-      <rect x="0" y="0" width="${Math.min(480, (slide.supportingLabel.length * 11) + 40)}" height="38" rx="8" fill="${palette.badgeBg}" stroke="${palette.accent}" stroke-width="1"/>
+      <rect x="0" y="0" width="${badgeWidth}" height="38" rx="8" fill="${palette.badgeBg}" stroke="${palette.accent}" stroke-width="1"/>
       <circle cx="20" cy="19" r="5" fill="${palette.accent}"/>
-      <text x="35" y="24" font-family="Plus Jakarta Sans, sans-serif" font-weight="700" font-size="14" fill="${palette.badgeText}" letter-spacing="1.5">${escapeXml(slide.supportingLabel.toUpperCase())}</text>
+      <text x="35" y="24" font-family="Plus Jakarta Sans, sans-serif" font-weight="700" font-size="14" fill="${palette.badgeText}" letter-spacing="1.5">${escapeXml(badgeLabel)}</text>
     </g>
   `;
 
@@ -263,11 +302,9 @@ export function generateSlideSvg(
   // Bullets / Workflow steps
   if (slide.bulletPoints && slide.bulletPoints.length > 0) {
     const startY = slide.highlightMetric ? contentEndY + 175 : contentEndY + 15;
-    const cardHeight = Math.min(height - startY - 140, slide.bulletPoints.length * 75);
 
     const bulletsSvg = slide.bulletPoints.map((pt, i) => {
       const py = startY + (i * 72);
-      const isCallFlow = slide.layoutType === 'call_flow';
       const bulletLines = wrapText(pt, 38);
       return `
         <g transform="translate(80, ${py})">
@@ -308,20 +345,19 @@ export function generateSlideSvg(
       slide.highlightMetric?.value?.toLowerCase().includes('demo') ||
       slide.highlightMetric?.value?.includes('844'));
 
-  let lastSlideButtonText = 'RUN YOUR NUMBERS 👉';
-  let lastSlideFooterText = 'https://garage-door-lost-revenue-caculator.vercel.app/';
+  let lastSlideButtonText = '🔗 LINK IN BIO';
+  let lastSlideFooterText = 'Tap link in bio (@stepstoneai) or DM "CALC"';
 
   if (isCalculatorCta) {
-    lastSlideButtonText = 'RUN YOUR NUMBERS 👉';
-    lastSlideFooterText = 'https://garage-door-lost-revenue-caculator.vercel.app/';
+    lastSlideButtonText = '🔗 LINK IN BIO';
+    lastSlideFooterText = 'Tap link in bio or DM "CALC" for direct link';
   } else if (isDmCalculator) {
     lastSlideButtonText = 'DM "CALCULATOR" 💬';
-    lastSlideFooterText = 'DM me CALCULATOR for the free estimator';
+    lastSlideFooterText = 'DM "CALCULATOR" for the free revenue estimator';
   } else if (isDemoCta) {
-    lastSlideButtonText = 'TRY LIVE DEMO 👉';
-    lastSlideFooterText = 'Link in bio to test the 24/7 demo agent';
+    lastSlideButtonText = '🔗 LINK IN BIO';
+    lastSlideFooterText = 'Tap link in bio to test the 24/7 demo agent';
   } else {
-    // dm_conversation or other
     lastSlideButtonText = 'LET’S TALK 💬';
     lastSlideFooterText = 'DM me and let’s talk missed calls';
   }
@@ -334,7 +370,7 @@ export function generateSlideSvg(
           ? `
             <rect x="${width - 440}" y="15" width="280" height="48" rx="24" fill="url(#accentGrad)"/>
             <text x="${width - 300}" y="45" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="16" fill="#000000" text-anchor="middle">${escapeXml(lastSlideButtonText)}</text>
-            <text x="0" y="45" font-family="JetBrains Mono, monospace" font-weight="700" font-size="${lastSlideFooterText.length > 40 ? '13' : '15'}" fill="${palette.accent}">${escapeXml(lastSlideFooterText)}</text>
+            <text x="0" y="45" font-family="Plus Jakarta Sans, sans-serif" font-weight="700" font-size="${lastSlideFooterText.length > 40 ? '14' : '15'}" fill="${palette.accent}">${escapeXml(lastSlideFooterText)}</text>
             `
           : `
           <text x="0" y="45" font-family="Plus Jakarta Sans, sans-serif" font-weight="500" font-size="16" fill="${palette.textSecondary}">stepstoneai.agency // Garage Door Call Handling</text>

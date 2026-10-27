@@ -152,13 +152,13 @@ export function getCtaCopy(ctaType: CtaType, rotationVariantIndex = 0, demoPhone
       type: 'calculator' as const,
       url: CALCULATOR_URL,
       linkedinCta: `\n\n${variantText}`,
-      instagramCta: `\n\n📊 ${variantText}`,
+      instagramCta: `\n\n📊 Want to run your numbers? Tap the link in our bio to open the free Garage Door Revenue-Loss Calculator! Or drop a comment with "CALC" / DM us "CALC" and we'll send the direct interactive link straight to your inbox!`,
       slideHeadline: 'How Much Revenue Could Missed Calls Be Costing You?',
-      slideBody: variantText,
-      slideActionText: 'RUN YOUR NUMBERS 👉',
+      slideBody: 'Tap the link in our bio to calculate your missed call revenue, or DM "CALC" for the interactive tool.',
+      slideActionText: '🔗 LINK IN BIO',
       slideMetric: {
-        value: 'RUN YOUR NUMBERS',
-        label: CALCULATOR_URL,
+        value: '🔗 LINK IN BIO',
+        label: 'Or DM "CALC" for direct link',
       },
     };
   }
@@ -417,7 +417,7 @@ You MUST return a JSON object with this EXACT structure:
     if (!linkedinCaption.includes(CALCULATOR_URL)) {
       linkedinCaption += ctaSpec.linkedinCta;
     }
-    if (!instagramCaption.includes(CALCULATOR_URL)) {
+    if (!instagramCaption.toLowerCase().includes('bio') && !instagramCaption.toLowerCase().includes('calc')) {
       instagramCaption += ctaSpec.instagramCta;
     }
   } else if (ctaType === 'dm_calculator') {
