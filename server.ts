@@ -54,6 +54,88 @@ app.get('/ping', (_req, res) => {
   res.status(200).send('pong');
 });
 
+// Dedicated Privacy Policy endpoint for Meta Graph API compliance and public verification
+app.get(['/privacy', '/privacy-policy'], (_req, res) => {
+  res.status(200).send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - Stepstone AI Agency Marketing Autopilot</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #020617; color: #cbd5e1; line-height: 1.6; margin: 0; padding: 0; }
+    .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+    header { border-bottom: 1px solid #1e293b; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-size: 20px; font-weight: 800; color: #ffffff; }
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 9999px; font-size: 11px; font-weight: 700; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); margin-bottom: 12px; }
+    h1 { font-size: 28px; color: #ffffff; margin-top: 0; }
+    h2 { font-size: 18px; color: #f8fafc; border-bottom: 1px solid #1e293b; padding-bottom: 8px; margin-top: 28px; }
+    p, li { font-size: 14px; color: #94a3b8; }
+    ul { padding-left: 20px; }
+    code { background: #0f172a; padding: 2px 6px; border-radius: 4px; font-family: monospace; color: #fbbf24; }
+    .contact-box { background: #090d16; border: 1px solid #1e293b; border-radius: 12px; padding: 20px; font-family: monospace; font-size: 13px; margin-top: 20px; }
+    .back-btn { display: inline-block; padding: 8px 16px; border-radius: 8px; background: #1e293b; color: #ffffff; text-decoration: none; font-size: 13px; font-weight: 600; }
+    .back-btn:hover { background: #334155; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">Stepstone AI Agency</div>
+      <a href="/" class="back-btn">&larr; Back to Dashboard</a>
+    </header>
+
+    <div class="badge">OFFICIAL PRIVACY POLICY</div>
+    <h1>Privacy Policy</h1>
+    <p><strong>Effective Date:</strong> October 28, 2026</p>
+    <p>This Privacy Policy explains how Stepstone AI Agency ("we", "us", or "our") collects, uses, and safeguards information through our B2B Marketing Autopilot software and official integrations with the Meta Graph API (Instagram) and LinkedIn API.</p>
+
+    <h2>1. Introduction & Purpose</h2>
+    <p>Stepstone AI Agency provides autonomous B2B marketing software designed for independent trade contractors, specifically garage door repair and installation service companies in the United States. Our software enables authorized users to generate, schedule, and publish educational 7-slide image carousel posts to Instagram and LinkedIn.</p>
+
+    <h2>2. Information We Collect</h2>
+    <p>To deliver carousel publishing functionality, we collect only the minimal credentials and operational metadata necessary:</p>
+    <ul>
+      <li><strong>Meta / Instagram Platform Data:</strong> Instagram Professional/Business Account ID, Meta User/Page Access Token, and verified Instagram username.</li>
+      <li><strong>LinkedIn Platform Data:</strong> OAuth 2.0 Access Token, Member URN / Organization URN.</li>
+      <li><strong>Content Assets:</strong> Slide headlines, body text, rendered PNG slides, captions, hashtags, and scheduled time slots.</li>
+      <li><strong>Delivery Logs:</strong> Meta container IDs, published post IDs, status codes, and timestamps required for delivery verification.</li>
+    </ul>
+    <p><em>Note: We do not collect, read, or store personal direct messages, personal feed photos, or followers' private data.</em></p>
+
+    <h2>3. How We Use Data</h2>
+    <p>Platform data is used strictly to:</p>
+    <ul>
+      <li>Authenticate with Meta Graph API and LinkedIn API.</li>
+      <li>Upload 7-slide carousel containers via the official <code>instagram_content_publish</code> permission.</li>
+      <li>Publish approved captions and carousels at scheduled times.</li>
+      <li>Provide delivery verification links in the app dashboard.</li>
+    </ul>
+    <p><strong>We never sell, rent, monetize, or share user data or access tokens with any third parties or advertisers.</strong></p>
+
+    <h2>4. Data Storage & Security</h2>
+    <p>All tokens and configurations are stored securely on the application server. All communications with Meta (<code>graph.facebook.com</code>) and LinkedIn (<code>api.linkedin.com</code>) take place exclusively over encrypted HTTPS connections.</p>
+
+    <h2>5. Data Deletion & Revocation</h2>
+    <p>Users can revoke access or delete stored credentials at any time:</p>
+    <ul>
+      <li><strong>Revoke via Meta:</strong> Go to Facebook Settings &rarr; <em>Business Integrations</em> &rarr; select this app &rarr; click <em>Remove</em>.</li>
+      <li><strong>Clear via Dashboard:</strong> In the app's <strong>Integrations</strong> tab, delete your Access Token and Account ID, then click <em>Save Settings</em>.</li>
+      <li><strong>Direct Deletion Request:</strong> Email us at <a href="mailto:privacy@stepstoneai.agency" style="color:#f59e0b;">privacy@stepstoneai.agency</a> with your account details.</li>
+    </ul>
+
+    <h2>6. Contact Us</h2>
+    <div class="contact-box">
+      <strong>Stepstone AI Agency</strong><br>
+      Website: https://stepstoneai.agency<br>
+      Email: jd0878308@gmail.com / privacy@stepstoneai.agency<br>
+      Jurisdiction: United States
+    </div>
+  </div>
+</body>
+</html>`);
+});
+
 // Static asset serving for rendered slide PNGs
 app.use('/api/assets', express.static(ASSETS_DIR));
 

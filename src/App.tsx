@@ -23,10 +23,12 @@ import { IntegrationsView } from './components/IntegrationsView';
 import { QuotasView } from './components/QuotasView';
 import { PublishedPostsView } from './components/PublishedPostsView';
 import { GenerateModal } from './components/GenerateModal';
+import { PrivacyPolicyPage } from './components/PrivacyPolicyPage';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<string>('cockpit');
+  const isPrivacyInitial = typeof window !== 'undefined' && (window.location.pathname === '/privacy' || window.location.pathname === '/privacy-policy');
+  const [activeTab, setActiveTab] = useState<string>(isPrivacyInitial ? 'privacy' : 'cockpit');
   const [status, setStatus] = useState<AppServerStatus | null>(null);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(null);
@@ -123,6 +125,21 @@ export default function App() {
     }, 15000);
     return () => clearInterval(interval);
   }, []);
+
+  // Listen to browser forward/back buttons for /privacy
+  useEffect(() => {
+    const handlePopState = () => {
+      if (typeof window !== 'undefined') {
+        if (window.location.pathname === '/privacy' || window.location.pathname === '/privacy-policy') {
+          setActiveTab('privacy');
+        } else if (activeTab === 'privacy') {
+          setActiveTab('cockpit');
+        }
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [activeTab]);
 
   // Emergency Pause Toggle
   const handleToggleEmergencyPause = async () => {
@@ -413,6 +430,19 @@ export default function App() {
 
   const selectedCampaign = campaigns.find((c) => c.id === selectedCampaignId) || campaigns[0] || null;
 
+  if (activeTab === 'privacy') {
+    return (
+      <PrivacyPolicyPage
+        onBack={() => {
+          if (typeof window !== 'undefined') {
+            window.history.pushState({}, '', '/');
+          }
+          setActiveTab('cockpit');
+        }}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
       {/* Top Navbar */}
@@ -560,7 +590,29 @@ export default function App() {
 
       {/* Footer */}
       <footer className="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500 font-mono">
-        Garage Door AI Marketing Autopilot // LinkedIn & Instagram Official APIs // 7-Slide B2B Image Carousels // No Video
+        <div>Garage Door AI Marketing Autopilot // Stepstone AI Agency // LinkedIn &amp; Instagram Official APIs</div>
+        <div className="mt-1.5 flex items-center justify-center gap-3">
+          <button
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                window.history.pushState({}, '', '/privacy');
+              }
+              setActiveTab('privacy');
+            }}
+            className="text-slate-400 hover:text-amber-400 underline transition-colors cursor-pointer"
+          >
+            Privacy Policy
+          </button>
+          <span>•</span>
+          <a
+            href="/privacy"
+            target="_blank"
+            rel="noreferrer"
+            className="text-slate-400 hover:text-amber-400 underline transition-colors"
+          >
+            Public Privacy URL (For Meta App Review)
+          </a>
+        </div>
       </footer>
     </div>
   );
