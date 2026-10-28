@@ -741,7 +741,7 @@ class DatabaseManager {
 
         return {
           strategy,
-          schedule: parsed.schedule || DEFAULT_SCHEDULE,
+          schedule: { ...(parsed.schedule || DEFAULT_SCHEDULE), timezone: 'America/Chicago' },
           linkedin: parsed.linkedin || DEFAULT_LINKEDIN,
           instagram: parsed.instagram || DEFAULT_INSTAGRAM,
           campaigns,
@@ -785,6 +785,7 @@ class DatabaseManager {
   }
 
   saveSchedule(schedule: SchedulerConfig): SchedulerConfig {
+    schedule.timezone = 'America/Chicago';
     this.data.schedule = schedule;
     this.persist();
     return this.data.schedule;

@@ -132,12 +132,12 @@ export const CockpitView: React.FC<CockpitViewProps> = ({
           <div className="text-2xl font-black text-white tracking-tight flex items-baseline justify-between">
             <span>{isAutoEnabled ? 'Automatic' : 'Draft First'}</span>
             <span className="text-xs font-mono text-amber-400 font-bold">
-              {status?.currentTzTime || '--:--'}
+              {status?.currentTzTime || '--:--'} CT
             </span>
           </div>
           <p className="text-[11px] text-slate-400 mt-2">
             {isAutoEnabled
-              ? `Auto-publishes slots once time arrives (${status?.timezone || 'America/Chicago'}).`
+              ? 'Auto-publishes slots once time arrives (America Central Time).'
               : 'Auto-publish is OFF. Toggle switch below to publish when due.'}
           </p>
         </div>

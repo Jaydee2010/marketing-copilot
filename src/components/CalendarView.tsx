@@ -67,7 +67,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
               <span>Target 4 Daily Posting Slots & Timezone</span>
             </h3>
             <p className="text-xs text-slate-400 mt-1">
-              The persistent server scheduler matches these times in your selected US timezone and handles publishing autonomously.
+              The persistent server scheduler matches these times in America Central Time and handles publishing autonomously.
             </p>
           </div>
 
@@ -84,17 +84,13 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {/* Timezone Selector */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-300">Target US Timezone</label>
+            <label className="text-xs font-semibold text-slate-300">Timezone</label>
             <select
-              value={localSchedule.timezone}
-              onChange={(e) => setLocalSchedule({ ...localSchedule, timezone: e.target.value })}
+              value="America/Chicago"
+              onChange={(e) => setLocalSchedule({ ...localSchedule, timezone: 'America/Chicago' })}
               className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white font-medium focus:outline-none focus:border-amber-500"
             >
-              <option value="America/New_York">Eastern Time (US & Canada)</option>
-              <option value="America/Chicago">Central Time (US & Canada)</option>
-              <option value="America/Denver">Mountain Time (US & Canada)</option>
-              <option value="America/Los_Angeles">Pacific Time (US & Canada)</option>
-              <option value="America/Phoenix">Arizona (MST)</option>
+              <option value="America/Chicago">America Central Time</option>
             </select>
           </div>
 
