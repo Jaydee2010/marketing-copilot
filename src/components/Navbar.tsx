@@ -13,6 +13,7 @@ import {
   Sparkles,
   Bot,
   CheckCircle2,
+  Shield,
 } from 'lucide-react';
 import { AppServerStatus } from '../types/index';
 
@@ -131,6 +132,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             { id: 'strategy', label: 'Marketing Strategy', icon: Settings2 },
             { id: 'integrations', label: 'LinkedIn & Instagram', icon: Share2 },
             { id: 'quotas', label: 'Quotas & Logs', icon: Activity },
+            { id: 'privacy', label: 'Privacy Policy', icon: Shield },
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;

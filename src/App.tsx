@@ -430,19 +430,6 @@ export default function App() {
 
   const selectedCampaign = campaigns.find((c) => c.id === selectedCampaignId) || campaigns[0] || null;
 
-  if (activeTab === 'privacy') {
-    return (
-      <PrivacyPolicyPage
-        onBack={() => {
-          if (typeof window !== 'undefined') {
-            window.history.pushState({}, '', '/');
-          }
-          setActiveTab('cockpit');
-        }}
-      />
-    );
-  }
-
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
       {/* Top Navbar */}
@@ -570,6 +557,17 @@ export default function App() {
                   setLogs(await res.json());
                 }}
                 loading={actionLoading}
+              />
+            )}
+
+            {activeTab === 'privacy' && (
+              <PrivacyPolicyPage
+                onBack={() => {
+                  if (typeof window !== 'undefined') {
+                    window.history.pushState({}, '', '/');
+                  }
+                  setActiveTab('cockpit');
+                }}
               />
             )}
           </>
