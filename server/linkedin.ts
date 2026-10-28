@@ -101,33 +101,51 @@ export async function publishToLinkedIn(campaignId: string, force = false): Prom
     await renderCampaignSlides(campaign.id, campaign.platforms.linkedin.format || 'portrait_4_5');
   }
 
-  // Check test mode or missing token
-  if (creds.isTestMode || !creds.isConnected || !creds.accessToken || !creds.memberUrn) {
-    // Honest test mode simulation
-    campaign.platforms.linkedin.status = 'published';
-    campaign.platforms.linkedin.publishedAt = new Date().toISOString();
-    campaign.platforms.linkedin.externalPostId = `test-li-post-${Date.now()}`;
-    campaign.platforms.linkedin.externalPostUrl = 'https://www.linkedin.com/feed/ (Test Sandbox Mode)';
-    campaign.platforms.linkedin.lastError = undefined;
+  const accessToken = (creds.accessToken || process.env.LINKEDIN_ACCESS_TOKEN || '').trim();
+  const memberUrn = (creds.memberUrn || process.env.LINKEDIN_MEMBER_URN || '').trim();
+
+  // If user explicitly enabled Sandbox / Test Mode in settings
+  if (creds.isTestMode) {
+    campaign.platforms.linkedin.status = 'draft';
+    campaign.platforms.linkedin.lastError = 'Sandbox Mode is ON: Validated 7 slides and caption for LinkedIn, but did not send to LinkedIn API. Uncheck Sandbox Mode in Integrations to publish live.';
     db.saveCampaign(campaign);
 
-    db.recordPostSuccess('linkedin');
     db.addLog({
       campaignId: campaign.id,
       campaignTitle: campaign.title,
       platform: 'linkedin',
       action: 'publish_attempt',
-      status: 'success',
-      message: `[TEST MODE] Validated multi-image post with 7 PNG slides (${campaign.platforms.linkedin.format}). Real LinkedIn credentials not active.`,
-      externalPostId: campaign.platforms.linkedin.externalPostId,
+      status: 'skipped',
+      message: `[SANDBOX TEST MODE] Validated multi-image post with 7 PNG slides (${campaign.platforms.linkedin.format}). Real LinkedIn credentials not active.`,
     });
 
     return {
-      success: true,
-      externalPostId: campaign.platforms.linkedin.externalPostId,
-      externalPostUrl: campaign.platforms.linkedin.externalPostUrl,
-      message: 'Test Mode: Validated 7 slides and post payload. Ready for real LinkedIn connection.',
+      success: false,
+      message: 'Sandbox / Test Mode is active. Uncheck Sandbox Mode in Integrations to post live to LinkedIn.',
       isTestMode: true,
+    };
+  }
+
+  // If credentials are not provided, FAIL visibly so user knows to connect
+  if (!accessToken || !memberUrn) {
+    const missingMsg = 'Cannot publish: Missing LinkedIn Access Token or Member URN. Please connect your LinkedIn account in Integrations.';
+    campaign.platforms.linkedin.status = 'failed';
+    campaign.platforms.linkedin.lastError = missingMsg;
+    db.saveCampaign(campaign);
+
+    db.addLog({
+      campaignId: campaign.id,
+      campaignTitle: campaign.title,
+      platform: 'linkedin',
+      action: 'publish_attempt',
+      status: 'failed',
+      message: missingMsg,
+    });
+
+    return {
+      success: false,
+      message: missingMsg,
+      isTestMode: false,
     };
   }
 

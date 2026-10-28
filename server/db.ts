@@ -793,21 +793,50 @@ class DatabaseManager {
 
   // Integrations
   getLinkedIn(): LinkedInCredentials {
-    return this.data.linkedin;
+    const creds = { ...this.data.linkedin };
+    if (!creds.accessToken && process.env.LINKEDIN_ACCESS_TOKEN) {
+      creds.accessToken = process.env.LINKEDIN_ACCESS_TOKEN;
+    }
+    if (!creds.memberUrn && process.env.LINKEDIN_MEMBER_URN) {
+      creds.memberUrn = process.env.LINKEDIN_MEMBER_URN;
+    }
+    return creds;
   }
 
   saveLinkedIn(creds: Partial<LinkedInCredentials>): LinkedInCredentials {
     this.data.linkedin = { ...this.data.linkedin, ...creds };
+    if (this.data.linkedin.accessToken && this.data.linkedin.memberUrn && !this.data.linkedin.isTestMode) {
+      this.data.linkedin.isConnected = true;
+    }
     this.persist();
     return this.data.linkedin;
   }
 
   getInstagram(): InstagramCredentials {
-    return this.data.instagram;
+    const creds = { ...this.data.instagram };
+    if (!creds.userAccessToken) {
+      const envToken =
+        process.env.META_USER_ACCESS_TOKEN ||
+        process.env.META_ACCESS_TOKEN ||
+        process.env.INSTAGRAM_ACCESS_TOKEN;
+      if (envToken) creds.userAccessToken = envToken;
+    }
+    if (!creds.instagramBusinessId) {
+      const envId = process.env.INSTAGRAM_BUSINESS_ID || process.env.META_BUSINESS_ID;
+      if (envId) creds.instagramBusinessId = envId;
+    }
+    return creds;
   }
 
   saveInstagram(creds: Partial<InstagramCredentials>): InstagramCredentials {
     this.data.instagram = { ...this.data.instagram, ...creds };
+    if (
+      this.data.instagram.userAccessToken &&
+      this.data.instagram.instagramBusinessId &&
+      !this.data.instagram.isTestMode
+    ) {
+      this.data.instagram.isConnected = true;
+    }
     this.persist();
     return this.data.instagram;
   }

@@ -116,32 +116,51 @@ export async function publishToInstagram(campaignId: string): Promise<PublishRes
     throw new Error(`Instagram allows maximum 30 hashtags (${campaign.platforms.instagram.hashtags.length} provided).`);
   }
 
-  // Test mode or unconfigured credentials check
-  if (creds.isTestMode || !creds.isConnected || !creds.userAccessToken || !creds.instagramBusinessId) {
-    campaign.platforms.instagram.status = 'published';
-    campaign.platforms.instagram.publishedAt = new Date().toISOString();
-    campaign.platforms.instagram.externalPostId = `test-ig-carousel-${Date.now()}`;
-    campaign.platforms.instagram.externalPostUrl = 'https://www.instagram.com/ (Test Sandbox Mode)';
-    campaign.platforms.instagram.lastError = undefined;
+  const igUserId = (creds.instagramBusinessId || process.env.INSTAGRAM_BUSINESS_ID || process.env.META_BUSINESS_ID || '').trim();
+  const token = (creds.userAccessToken || process.env.META_USER_ACCESS_TOKEN || process.env.META_ACCESS_TOKEN || process.env.INSTAGRAM_ACCESS_TOKEN || '').trim();
+
+  // If user explicitly enabled Sandbox / Test Mode in settings
+  if (creds.isTestMode) {
+    campaign.platforms.instagram.status = 'draft';
+    campaign.platforms.instagram.lastError = 'Sandbox Mode is ON: Validated 7 slides and caption, but did not send to Meta Graph API. Uncheck Sandbox Mode in Integrations to publish live.';
     db.saveCampaign(campaign);
 
-    db.recordPostSuccess('instagram');
     db.addLog({
       campaignId: campaign.id,
       campaignTitle: campaign.title,
       platform: 'instagram',
       action: 'publish_attempt',
-      status: 'success',
-      message: `[TEST MODE] Validated 7-image carousel container for Instagram (${campaign.platforms.instagram.format}). Meta Developer credentials not active.`,
-      externalPostId: campaign.platforms.instagram.externalPostId,
+      status: 'skipped',
+      message: `[SANDBOX TEST MODE] Validated 7-image carousel container for Instagram (${campaign.platforms.instagram.format}). Real publishing paused because Sandbox Mode is checked.`,
     });
 
     return {
-      success: true,
-      externalPostId: campaign.platforms.instagram.externalPostId,
-      externalPostUrl: campaign.platforms.instagram.externalPostUrl,
-      message: 'Test Mode: Carousel pre-flight passed. 7 images and caption validated for Instagram format.',
+      success: false,
+      message: 'Sandbox / Test Mode is active. Uncheck Sandbox Mode in Integrations to post live to Instagram.',
       isTestMode: true,
+    };
+  }
+
+  // If credentials are not provided, FAIL visibly so user knows to connect
+  if (!igUserId || !token) {
+    const missingMsg = 'Cannot publish: Missing Instagram Business Account ID or Meta Access Token. Please enter them in Integrations.';
+    campaign.platforms.instagram.status = 'failed';
+    campaign.platforms.instagram.lastError = missingMsg;
+    db.saveCampaign(campaign);
+
+    db.addLog({
+      campaignId: campaign.id,
+      campaignTitle: campaign.title,
+      platform: 'instagram',
+      action: 'publish_attempt',
+      status: 'failed',
+      message: missingMsg,
+    });
+
+    return {
+      success: false,
+      message: missingMsg,
+      isTestMode: false,
     };
   }
 
@@ -151,7 +170,11 @@ export async function publishToInstagram(campaignId: string): Promise<PublishRes
     if (hostUrl && !hostUrl.startsWith('http')) {
       hostUrl = `https://${hostUrl.replace(/^\/+/, '')}`;
     } else {
-      throw new Error('Meta Graph API requires images to be accessible over a public HTTPS URL. Please set your public App URL in Instagram settings.');
+      const hostErrMsg = 'Meta Graph API requires images to be accessible over a public HTTPS URL. Please set your public App URL in Instagram settings.';
+      campaign.platforms.instagram.status = 'failed';
+      campaign.platforms.instagram.lastError = hostErrMsg;
+      db.saveCampaign(campaign);
+      return { success: false, message: hostErrMsg, isTestMode: false };
     }
   }
 
@@ -160,8 +183,6 @@ export async function publishToInstagram(campaignId: string): Promise<PublishRes
     campaign.platforms.instagram.status = 'publishing';
     db.saveCampaign(campaign);
 
-    const igUserId = creds.instagramBusinessId!.trim();
-    const token = creds.userAccessToken!.trim();
     const itemContainerIds: string[] = [];
 
     // Step 1: Create 7 item containers
