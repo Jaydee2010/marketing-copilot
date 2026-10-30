@@ -248,8 +248,27 @@ app.put('/api/integrations/linkedin', (req, res) => {
 // LinkedIn OAuth Redirect Flow
 app.get('/api/auth/linkedin/url', (req, res) => {
   try {
-    const creds = db.getLinkedIn();
-    const url = getLinkedInAuthUrl(creds);
+    const current = db.getLinkedIn();
+    const clientId = ((req.query.clientId as string) || current.clientId || '').trim();
+    const redirectUri = ((req.query.redirectUri as string) || current.redirectUri || '').trim();
+
+    if (!clientId) {
+      return res.status(400).json({ error: 'Please enter your LinkedIn Client ID before connecting.' });
+    }
+    if (!redirectUri) {
+      return res.status(400).json({ error: 'Please enter your LinkedIn OAuth Redirect URI before connecting.' });
+    }
+
+    // Auto-save clientId & redirectUri to db if passed from frontend
+    if (clientId !== current.clientId || redirectUri !== current.redirectUri) {
+      db.saveLinkedIn({ clientId, redirectUri, isTestMode: false });
+    }
+
+    const url = getLinkedInAuthUrl({
+      ...current,
+      clientId,
+      redirectUri,
+    });
     res.json({ url });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);

@@ -161,8 +161,18 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             <span>Instagram Publishing Enabled</span>
           </label>
 
+          <label className="flex items-center gap-2 cursor-pointer text-slate-300">
+            <input
+              type="checkbox"
+              checked={localSchedule.autoGenerateBatchEnabled !== false}
+              onChange={(e) => setLocalSchedule({ ...localSchedule, autoGenerateBatchEnabled: e.target.checked })}
+              className="rounded bg-slate-950 border-slate-700 text-amber-500 focus:ring-0"
+            />
+            <span className="text-amber-300 font-semibold">Autonomous Daily Replenishment (Generate 4 Fresh Posts Daily)</span>
+          </label>
+
           <div className="ml-auto text-slate-400 font-mono text-[11px]">
-            Daily Limit: <span className="text-amber-400 font-bold">{localSchedule.dailyPostLimitPerPlatform} posts</span> per platform
+            Daily Target: <span className="text-amber-400 font-bold">{localSchedule.dailyTargetPosts || 4} posts</span> / day
           </div>
         </div>
       </div>

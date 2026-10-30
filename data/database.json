@@ -101,10 +101,10 @@
   },
   "linkedin": {
     "isConnected": false,
-    "clientId": "",
+    "clientId": "78j3s1i8rfcoxv",
     "clientSecret": "",
-    "redirectUri": "https://your-app-domain.com/api/auth/linkedin/callback",
-    "isTestMode": true
+    "redirectUri": "https://marketing-copilot-rvde.onrender.com/api/auth/linkedin/callback",
+    "isTestMode": false
   },
   "instagram": {
     "isConnected": false,
@@ -1045,7 +1045,7 @@
     "todayPostsInstagram": 0,
     "todayRenderedAssetsCount": 0,
     "totalAssetsDiskBytes": 1606236,
-    "lastQuotaResetDate": "2026-10-24",
+    "lastQuotaResetDate": "2026-10-30",
     "maxDailyGeminiRequests": 50,
     "maxDailyPostsPerPlatform": 4
   }

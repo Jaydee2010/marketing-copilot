@@ -56,6 +56,13 @@ export const CockpitView: React.FC<CockpitViewProps> = ({
   const isAutoEnabled = status?.autoPublishEnabled || false;
   const isGlobalPaused = status?.globalPaused || false;
 
+  const pendingQueue = campaigns.filter(
+    (c) =>
+      c.platforms.instagram.status !== 'published' &&
+      c.platforms.linkedin.status !== 'published'
+  );
+  const displayQueue = pendingQueue.length >= 4 ? pendingQueue.slice(0, 4) : campaigns.slice(0, 4);
+
   const handlePublish = async (id: string, platform: 'linkedin' | 'instagram' | 'both') => {
     try {
       setActivePublishingId(id);
@@ -278,18 +285,21 @@ export const CockpitView: React.FC<CockpitViewProps> = ({
 
       {/* Today's Queue (4 Scheduled Slots) */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h3 className="text-lg font-bold text-white tracking-tight">Today's Target Queue (4 Posts)</h3>
-            <span className="text-xs text-slate-400 font-mono">({campaigns.length} campaigns in database)</span>
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2.5">
+            <h3 className="text-lg font-bold text-white tracking-tight">Active Target Queue (4 Slots)</h3>
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+              {pendingQueue.length} FRESH UNPUBLISHED
+            </span>
+            <span className="text-xs text-slate-400 font-mono">({campaigns.length} total generated)</span>
           </div>
           <span className="text-xs text-slate-400 hidden sm:inline">
-            Each post contains 7 verified slides with honest trade metrics.
+            Auto-replenishes fresh 7-slide campaigns daily. Never repeats old content.
           </span>
         </div>
 
         <div className="grid grid-cols-1 gap-4">
-          {campaigns.slice(0, 4).map((campaign, idx) => {
+          {displayQueue.map((campaign, idx) => {
             const isProcessing = activePublishingId === campaign.id;
             const li = campaign.platforms.linkedin;
             const ig = campaign.platforms.instagram;

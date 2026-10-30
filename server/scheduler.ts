@@ -4,6 +4,8 @@ import { db } from './db';
 import { publishToLinkedIn } from './linkedin';
 import { publishToInstagram } from './instagram';
 import { renderCampaignSlides } from './renderer';
+import { generateDailyBatch } from './gemini';
+import { SchedulerConfig } from '../src/types/index';
 
 const ASSETS_DIR = process.env.VERCEL
   ? path.resolve('/tmp', 'data', 'assets')
@@ -12,6 +14,7 @@ const ASSETS_DIR = process.env.VERCEL
 class AutopilotScheduler {
   private timer: NodeJS.Timeout | null = null;
   private isProcessing = false;
+  private isGeneratingBatch = false;
   private isRunning = false;
 
   start() {
@@ -57,19 +60,92 @@ class AutopilotScheduler {
 
     const pendingCount = campaigns.filter(
       (c) =>
-        (c.platforms.linkedin.enabled && c.platforms.linkedin.status === 'scheduled') ||
-        (c.platforms.instagram.enabled && c.platforms.instagram.status === 'scheduled')
+        (c.platforms.linkedin.enabled && c.platforms.linkedin.status !== 'published') ||
+        (c.platforms.instagram.enabled && c.platforms.instagram.status !== 'published')
     ).length;
 
     return {
       isRunning: this.isRunning,
       isProcessing: this.isProcessing,
+      isGeneratingBatch: this.isGeneratingBatch,
       timezone: schedule.timezone,
       currentTzTime,
       globalPaused: schedule.globalPaused,
       autoPublishEnabled: schedule.autoPublishEnabled,
       pendingCount,
     };
+  }
+
+  /**
+   * Autonomous Queue Replenishment:
+   * Checks if today's date has fresh campaigns, or if the queue is low on unpublished posts.
+   * If needed, Gemini autonomously generates a brand-new 4-post batch adhering to all CTA rules,
+   * pre-renders all 7 slides as PNGs, and queues them for scheduled auto-publishing.
+   */
+  async ensureFreshDailyQueue(schedule: SchedulerConfig, todayDateStr: string) {
+    if (this.isGeneratingBatch) return;
+    if (schedule.autoGenerateBatchEnabled === false) return;
+    if (!process.env.GEMINI_API_KEY) return;
+
+    const allCampaigns = db.getCampaigns();
+
+    // Count how many unpublished campaigns exist in total
+    const pendingCampaigns = allCampaigns.filter(
+      (c) =>
+        c.platforms.instagram.status !== 'published' &&
+        c.platforms.linkedin.status !== 'published'
+    );
+
+    // If today hasn't had a batch generated OR if pending unpublished queue is low (< 4)
+    const needsBatch =
+      schedule.lastBatchGeneratedDate !== todayDateStr ||
+      pendingCampaigns.length < (schedule.dailyTargetPosts || 4);
+
+    if (needsBatch) {
+      this.isGeneratingBatch = true;
+      try {
+        console.log(`[Scheduler] 🚀 Auto-generating fresh 4-post batch with Gemini for ${todayDateStr}...`);
+
+        const freshBatch = await generateDailyBatch();
+
+        // Auto-render PNG slides for each new campaign on disk
+        for (const c of freshBatch) {
+          try {
+            await renderCampaignSlides(c.id, 'portrait_4_5');
+          } catch (renderErr) {
+            console.warn(`[Scheduler] Slide render warning for campaign ${c.id}:`, renderErr);
+          }
+        }
+
+        // Update schedule with today's batch generation date
+        schedule.lastBatchGeneratedDate = todayDateStr;
+        db.saveSchedule(schedule);
+
+        db.addLog({
+          campaignId: freshBatch[0]?.id || 'system',
+          campaignTitle: 'Continuous Autonomous Content Engine',
+          platform: 'instagram',
+          action: 'scheduled_trigger',
+          status: 'success',
+          message: `Generated and rendered ${freshBatch.length} fresh, unique 7-slide campaigns for ${todayDateStr} (2x Calculator, 2x Alternative CTAs).`,
+        });
+
+        console.log(`[Scheduler] ✅ Successfully queued ${freshBatch.length} fresh new campaigns for ${todayDateStr}!`);
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.error('[Scheduler] Failed to auto-generate daily campaign batch:', msg);
+        db.addLog({
+          campaignId: 'system',
+          campaignTitle: 'Autonomous Batch Generation Warning',
+          platform: 'instagram',
+          action: 'validation_fail',
+          status: 'failed',
+          message: `Auto-generation paused: ${msg}`,
+        });
+      } finally {
+        this.isGeneratingBatch = false;
+      }
+    }
   }
 
   async tick() {
@@ -79,7 +155,6 @@ class AutopilotScheduler {
 
     this.isProcessing = true;
     try {
-      const campaigns = db.getCampaigns();
       const now = new Date();
 
       // Extract current hour and minute in user's configured timezone
@@ -95,76 +170,101 @@ class AutopilotScheduler {
       const currentTotalMinutes = hour * 60 + minute;
       const currentTimeSlot = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
 
-      // Target active queue (the 4 daily target posts)
-      const queueCampaigns = campaigns.slice(0, schedule.dailyTargetPosts || 4);
+      // Date string in target timezone (YYYY-MM-DD)
+      const todayDateStr = new Intl.DateTimeFormat('en-CA', {
+        timeZone: schedule.timezone,
+      }).format(now);
 
-      for (let i = 0; i < queueCampaigns.length; i++) {
-        const campaign = queueCampaigns[i];
-        const assignedSlot =
-          campaign.scheduledTime ||
-          schedule.dailySlots[i % schedule.dailySlots.length] ||
-          '08:15';
-        const [slotH, slotM] = assignedSlot.split(':').map((v) => parseInt(v, 10) || 0);
+      // 1. Ensure queue has fresh campaigns generated for today
+      await this.ensureFreshDailyQueue(schedule, todayDateStr);
+
+      // 2. Refresh campaigns list after potential replenishment
+      const campaigns = db.getCampaigns();
+
+      // 3. For each daily slot (e.g. 08:15, 11:45, 15:30, 18:45), check if due
+      for (let slotIdx = 0; slotIdx < schedule.dailySlots.length; slotIdx++) {
+        const slotTime = schedule.dailySlots[slotIdx];
+        const [slotH, slotM] = slotTime.split(':').map((v) => parseInt(v, 10) || 0);
         const slotTotalMinutes = slotH * 60 + slotM;
 
-        // Is this slot due or overdue?
-        // Slot is due if current timezone time is >= scheduled slot time
+        // Is this slot due or overdue today?
         const isSlotDue = currentTotalMinutes >= slotTotalMinutes;
+        if (!isSlotDue || !schedule.autoPublishEnabled) continue;
 
-        const liStatus = campaign.platforms?.linkedin?.status;
-        const igStatus = campaign.platforms?.instagram?.status;
+        // Has this slot already been successfully published today?
+        const alreadyPublishedToday = campaigns.some((c) => {
+          const isSlotMatch = c.scheduledTime === slotTime;
+          const igPubToday = c.platforms.instagram.publishedAt?.startsWith(todayDateStr);
+          const liPubToday = c.platforms.linkedin.publishedAt?.startsWith(todayDateStr);
+          return isSlotMatch && (igPubToday || liPubToday);
+        });
 
-        // Check if already published
-        const isIgPublished = igStatus === 'published';
-        const isLiPublished = liStatus === 'published';
+        if (alreadyPublishedToday) {
+          continue; // Slot already fulfilled for today
+        }
 
-        if (schedule.autoPublishEnabled && isSlotDue) {
-          // Instagram Auto-Publishing check
-          const canPublishIg =
-            campaign.platforms?.instagram?.enabled &&
-            !schedule.instagramPaused &&
-            !isIgPublished &&
-            igStatus !== 'publishing' &&
-            (campaign.platforms.instagram.retryCount || 0) < 3;
+        // Find the next UNPUBLISHED campaign matching this slot
+        let candidate = campaigns.find(
+          (c) =>
+            c.scheduledTime === slotTime &&
+            c.platforms.instagram.status !== 'published' &&
+            c.platforms.linkedin.status !== 'published' &&
+            c.platforms.instagram.status !== 'publishing' &&
+            c.platforms.linkedin.status !== 'publishing'
+        );
 
-          // LinkedIn Auto-Publishing check
-          const canPublishLi =
-            campaign.platforms?.linkedin?.enabled &&
-            !schedule.linkedinPaused &&
-            !isLiPublished &&
-            liStatus !== 'publishing' &&
-            (campaign.platforms.linkedin.retryCount || 0) < 3;
+        // Fallback: next available unpublished campaign
+        if (!candidate) {
+          candidate = campaigns.find(
+            (c) =>
+              c.platforms.instagram.status !== 'published' &&
+              c.platforms.linkedin.status !== 'published' &&
+              c.platforms.instagram.status !== 'publishing' &&
+              c.platforms.linkedin.status !== 'publishing'
+          );
+        }
 
-          if (canPublishIg || canPublishLi) {
-            console.log(
-              `[Scheduler] Slot ${assignedSlot} is DUE (Current ${schedule.timezone} time: ${currentTimeSlot}). Auto-publishing campaign "${campaign.title}"...`
-            );
+        if (candidate) {
+          console.log(
+            `[Scheduler] Slot ${slotTime} is DUE (Current ${schedule.timezone} time: ${currentTimeSlot}). Auto-publishing fresh campaign "${candidate.title}"...`
+          );
 
-            // Pre-render slides if needed
-            if (!campaign.renderedAssets || campaign.renderedAssets.length < 7) {
-              try {
-                await renderCampaignSlides(campaign.id, 'portrait_4_5');
-              } catch (renderErr) {
-                console.error(`[Scheduler] Failed to pre-render slides for ${campaign.id}:`, renderErr);
-                continue;
-              }
+          // Pre-render slides if needed
+          if (!candidate.renderedAssets || candidate.renderedAssets.length < 7) {
+            try {
+              await renderCampaignSlides(candidate.id, 'portrait_4_5');
+            } catch (renderErr) {
+              console.error(`[Scheduler] Failed to pre-render slides for ${candidate.id}:`, renderErr);
+              continue;
             }
-
-            // Publish to Instagram
-            if (canPublishIg) {
-              console.log(`[Scheduler] Auto-publishing to Instagram for slot ${assignedSlot}...`);
-              await publishToInstagram(campaign.id);
-            }
-
-            // Publish to LinkedIn
-            if (canPublishLi) {
-              console.log(`[Scheduler] Auto-publishing to LinkedIn for slot ${assignedSlot}...`);
-              await publishToLinkedIn(campaign.id);
-            }
-
-            // Brief pause between posts to respect platform rate limits
-            await new Promise((resolve) => setTimeout(resolve, 3000));
           }
+
+          // Publish to Instagram
+          if (
+            candidate.platforms.instagram.enabled &&
+            !schedule.instagramPaused &&
+            candidate.platforms.instagram.status !== 'published' &&
+            candidate.platforms.instagram.status !== 'publishing' &&
+            (candidate.platforms.instagram.retryCount || 0) < 3
+          ) {
+            console.log(`[Scheduler] Auto-publishing to Instagram for slot ${slotTime}...`);
+            await publishToInstagram(candidate.id);
+          }
+
+          // Publish to LinkedIn
+          if (
+            candidate.platforms.linkedin.enabled &&
+            !schedule.linkedinPaused &&
+            candidate.platforms.linkedin.status !== 'published' &&
+            candidate.platforms.linkedin.status !== 'publishing' &&
+            (candidate.platforms.linkedin.retryCount || 0) < 3
+          ) {
+            console.log(`[Scheduler] Auto-publishing to LinkedIn for slot ${slotTime}...`);
+            await publishToLinkedIn(candidate.id);
+          }
+
+          // Brief pause between posts to respect platform rate limits
+          await new Promise((resolve) => setTimeout(resolve, 3000));
         }
       }
     } finally {

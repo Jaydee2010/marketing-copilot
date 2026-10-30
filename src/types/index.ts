@@ -143,6 +143,8 @@ export interface SchedulerConfig {
   dailyPostLimitPerPlatform: number;
   maxRetries: number;
   activeFormatPreference: SlideFormat;
+  lastBatchGeneratedDate?: string;
+  autoGenerateBatchEnabled?: boolean;
 }
 
 export interface LinkedInCredentials {

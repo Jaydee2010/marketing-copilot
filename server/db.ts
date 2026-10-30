@@ -116,14 +116,16 @@ export const DEFAULT_SCHEDULE: SchedulerConfig = {
   dailyPostLimitPerPlatform: 4,
   maxRetries: 3,
   activeFormatPreference: 'portrait_4_5',
+  lastBatchGeneratedDate: '',
+  autoGenerateBatchEnabled: true,
 };
 
 export const DEFAULT_LINKEDIN: LinkedInCredentials = {
   isConnected: false,
   clientId: '',
   clientSecret: '',
-  redirectUri: 'https://your-app-domain.com/api/auth/linkedin/callback',
-  isTestMode: true,
+  redirectUri: 'https://marketing-copilot-rvde.onrender.com/api/auth/linkedin/callback',
+  isTestMode: false,
 };
 
 export const DEFAULT_INSTAGRAM: InstagramCredentials = {
@@ -794,6 +796,17 @@ class DatabaseManager {
   // Integrations
   getLinkedIn(): LinkedInCredentials {
     const creds = { ...this.data.linkedin };
+    if (!creds.clientId && process.env.LINKEDIN_CLIENT_ID) {
+      creds.clientId = process.env.LINKEDIN_CLIENT_ID;
+    }
+    if (!creds.clientSecret && process.env.LINKEDIN_CLIENT_SECRET) {
+      creds.clientSecret = process.env.LINKEDIN_CLIENT_SECRET;
+    }
+    if (!creds.redirectUri || creds.redirectUri.includes('your-app-domain.com')) {
+      creds.redirectUri =
+        process.env.LINKEDIN_REDIRECT_URI ||
+        'https://marketing-copilot-rvde.onrender.com/api/auth/linkedin/callback';
+    }
     if (!creds.accessToken && process.env.LINKEDIN_ACCESS_TOKEN) {
       creds.accessToken = process.env.LINKEDIN_ACCESS_TOKEN;
     }

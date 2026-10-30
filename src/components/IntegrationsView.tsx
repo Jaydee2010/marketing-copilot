@@ -43,6 +43,11 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({
     message: string;
     details?: string;
   } | null>(null);
+  const [liFeedback, setLiFeedback] = useState<{
+    type: 'success' | 'error' | 'info';
+    message: string;
+    details?: string;
+  } | null>(null);
 
   React.useEffect(() => {
     setLocalLI(linkedin);
@@ -57,7 +62,17 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({
   const handleSaveLinkedIn = async () => {
     try {
       setSavingLI(true);
+      setLiFeedback(null);
       await onUpdateLinkedIn(localLI);
+      setLiFeedback({
+        type: 'success',
+        message: 'LinkedIn settings saved successfully!',
+      });
+    } catch (err: any) {
+      setLiFeedback({
+        type: 'error',
+        message: `Save failed: ${err.message}`,
+      });
     } finally {
       setSavingLI(false);
     }
@@ -188,15 +203,58 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({
 
   const handleConnectLinkedIn = async () => {
     try {
-      const res = await fetch('/api/auth/linkedin/url');
+      setLiFeedback(null);
+
+      const clientId = (localLI.clientId || '').trim();
+      const clientSecret = (localLI.clientSecret || '').trim();
+      const redirectUri = (localLI.redirectUri || '').trim();
+
+      if (!clientId) {
+        setLiFeedback({
+          type: 'error',
+          message: 'Please enter your LinkedIn Client ID in the field above before connecting.',
+        });
+        return;
+      }
+      if (!redirectUri) {
+        setLiFeedback({
+          type: 'error',
+          message: 'Please specify the OAuth Redirect URI before connecting.',
+        });
+        return;
+      }
+
+      // Automatically auto-save current form settings to backend first so secrets are preserved
+      await onUpdateLinkedIn({
+        ...localLI,
+        clientId,
+        clientSecret,
+        redirectUri,
+        isTestMode: false,
+      });
+
+      // Request authorization URL with query parameters
+      const res = await fetch(
+        `/api/auth/linkedin/url?clientId=${encodeURIComponent(clientId)}&redirectUri=${encodeURIComponent(redirectUri)}`
+      );
       const data = await res.json();
       if (data.url) {
+        setLiFeedback({
+          type: 'info',
+          message: 'Redirecting to LinkedIn official OAuth authorization...',
+        });
         window.location.href = data.url;
       } else {
-        alert(data.error || 'Failed to start LinkedIn OAuth');
+        setLiFeedback({
+          type: 'error',
+          message: data.error || 'Failed to start LinkedIn OAuth flow.',
+        });
       }
     } catch (e: any) {
-      alert(`Error starting LinkedIn OAuth: ${e.message}`);
+      setLiFeedback({
+        type: 'error',
+        message: `Error starting LinkedIn OAuth: ${e.message}`,
+      });
     }
   };
 
@@ -246,6 +304,31 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({
                 )}
               </div>
             </div>
+
+            {/* LinkedIn Feedback Message Banner */}
+            {liFeedback && (
+              <div
+                className={`p-3.5 rounded-xl border text-xs flex items-start gap-2.5 ${
+                  liFeedback.type === 'success'
+                    ? 'bg-emerald-950/40 border-emerald-800 text-emerald-200'
+                    : liFeedback.type === 'error'
+                    ? 'bg-red-950/40 border-red-800 text-red-200'
+                    : 'bg-blue-950/40 border-blue-800 text-blue-200'
+                }`}
+              >
+                {liFeedback.type === 'success' ? (
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                ) : (
+                  <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                )}
+                <div>
+                  <div className="font-semibold">{liFeedback.message}</div>
+                  {liFeedback.details && (
+                    <div className="mt-1 text-[11px] opacity-80">{liFeedback.details}</div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Test Mode Toggle */}
             <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
