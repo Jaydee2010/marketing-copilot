@@ -97,7 +97,8 @@
     "instagramPaused": false,
     "dailyPostLimitPerPlatform": 4,
     "maxRetries": 3,
-    "activeFormatPreference": "portrait_4_5"
+    "activeFormatPreference": "portrait_4_5",
+    "lastBatchGeneratedDate": "2026-10-29"
   },
   "linkedin": {
     "isConnected": false,
@@ -117,23 +118,240 @@
   },
   "campaigns": [
     {
+      "id": "camp-1793327328314-nvrd",
+      "title": "The Universal Law of Torsion Springs & Missed Revenue",
+      "targetAudience": "US Garage Door Repair and Installation Owners",
+      "pillarId": "missed-calls",
+      "buyingMotivation": "make_money",
+      "ctaType": "calculator",
+      "objective": "Highlight the cost of missed calls during hands-on garage door repairs and drive owners to the revenue-loss calculator.",
+      "contentAngleExplanation": "Opens with relatable trade humor about when springs snap and homeowners blaming magic, connects it to the reality of having tools in both hands when high-dollar emergency calls come in, and introduces automated call triage.",
+      "theme": "emerald-minimal",
+      "scheduledTime": "08:15",
+      "slides": [
+        {
+          "slideNumber": 1,
+          "headline": "The Universal Law of Torsion Springs",
+          "bodyText": "They only snap at 6:45 AM on a Monday when the customer has an early flight. Never on a slow Tuesday.",
+          "supportingLabel": "TRADE HUMOR",
+          "layoutType": "hook_title",
+          "icon": "wrench",
+          "visualInstruction": "Illustration or close-up icon of a sheared oil-tempered torsion spring on a residential shaft.",
+          "bulletPoints": [],
+          "highlightMetric": {
+            "value": "6:45 AM",
+            "label": "Peak snap timing"
+          }
+        },
+        {
+          "slideNumber": 2,
+          "headline": "\"I Swear It Just Stopped Working On Its Own\"",
+          "bodyText": "Bottom panel is caved in like an F-150 bumper hit it. You're 10ft up, winding bars locked in both hands.",
+          "supportingLabel": "EMERGENCY DISPATCH",
+          "layoutType": "problem_stat",
+          "icon": "alert-triangle",
+          "visualInstruction": "Graphic depicting technician atop 10ft ladder holding winding bars with phone vibrating in pocket.",
+          "bulletPoints": [
+            "Both hands committed to holding spring torque",
+            "Phone vibrating violently in your tool pouch",
+            "Zero safe ways to answer without losing control"
+          ]
+        },
+        {
+          "slideNumber": 3,
+          "headline": "She Tapped Your Competitor in 84 Seconds",
+          "bodyText": "Across town, an emergency caller had her car trapped before work. She didn't leave a voicemail.",
+          "supportingLabel": "REVENUE LEAK",
+          "layoutType": "breakdown_list",
+          "icon": "phone-missed",
+          "visualInstruction": "Timeline graphic showing missed call at 8:14 AM and competitor booking confirmed at 8:16 AM.",
+          "bulletPoints": [
+            "Trapped vehicle meant immediate urgency",
+            "First shop that answered secured the dispatch fee"
+          ],
+          "highlightMetric": {
+            "value": "$420",
+            "label": "Lost emergency ticket"
+          }
+        },
+        {
+          "slideNumber": 4,
+          "headline": "More Google Ads Won't Fix an Empty Phone",
+          "bodyText": "Pouring ad dollars into lead generation only works if someone answers before the caller taps back to search.",
+          "supportingLabel": "CONTRACTOR MATH",
+          "layoutType": "solution_feature",
+          "icon": "trending-up",
+          "visualInstruction": "Illustration of a bucket with clean water entering the top and leaking out unmonitored holes.",
+          "bulletPoints": [
+            "Over 75% of emergency door callers hang up on voicemail",
+            "Speed-to-lead beats company branding when cars are trapped"
+          ]
+        },
+        {
+          "slideNumber": 5,
+          "headline": "The 2-Ring Dispatch & Triage System",
+          "bodyText": "A quiet voice intake answers immediately in natural contractor English while your hands stay on the ladder.",
+          "supportingLabel": "AI CALL INTAKE",
+          "layoutType": "call_flow",
+          "icon": "bot",
+          "visualInstruction": "Three-step diagram showing instant intake, data capture, and dispatch alert to service truck.",
+          "bulletPoints": [
+            "Answers by ring 2 with clear, custom business greeting",
+            "Collects door size, opener brand, and trapped car status",
+            "Sends instant dispatch text with job details to tech van"
+          ]
+        },
+        {
+          "slideNumber": 6,
+          "headline": "The Job Was Booked Before The Ladder Moved",
+          "bodyText": "Emergency calls turn into locked-in dispatches while your crew works safely. Zero phone tag after hours.",
+          "supportingLabel": "OWNER FREEDOM",
+          "layoutType": "metrics_grid",
+          "icon": "shield-check",
+          "visualInstruction": "Clean confirmation card showing dispatched address and zero unlistened voicemails at day end.",
+          "bulletPoints": [
+            "High-margin spring replacements captured seamlessly",
+            "Evenings off without spending an hour returning dead voicemails"
+          ],
+          "highlightMetric": {
+            "value": "0",
+            "label": "Voicemails waiting at 5:30 PM"
+          }
+        },
+        {
+          "slideNumber": 7,
+          "headline": "How Much Revenue Could Missed Calls Be Costing You?",
+          "bodyText": "Tap the link in our bio to calculate your missed call revenue, or DM \"CALC\" for the interactive tool.",
+          "supportingLabel": "TAKE ACTION",
+          "layoutType": "cta_action",
+          "icon": "dollar-sign",
+          "visualInstruction": "Bold call-to-action layout featuring URL box: https://garage-door-lost-revenue-caculator.vercel.app/",
+          "bulletPoints": [],
+          "highlightMetric": {
+            "value": "🔗 LINK IN BIO",
+            "label": "Or DM \"CALC\" for direct link"
+          },
+          "ctaUrl": "https://garage-door-lost-revenue-caculator.vercel.app/"
+        }
+      ],
+      "platforms": {
+        "linkedin": {
+          "enabled": true,
+          "caption": "The Universal Law of Torsion Springs: They only snap at 6:45 AM on a freezing Monday when the homeowner has an early flight. Never at 2 PM on a slow Tuesday.\n\nAnd when you get there, the homeowner insists: \"I swear it just stopped working on its own!\"\n(Meanwhile, bottom panel #1 has a fresh crease the exact width and depth of a Ford F-150 bumper).\n\nTrade humor keeps us sane on the truck. But here is the part that is not funny:\n\nWhile Dave was 10 feet up on an A-frame ladder, both hands locked on winding bars setting 250 lbs of torque, his phone buzzed three times in his front pocket.\n\nHe couldn’t answer. By the time he climbed down, wiped his hands, and checked his voicemail at 8:42 AM, there was no message.\n\nAcross town, a homeowner with a trapped minivan had dialed his second Google result 90 seconds later. That company answered on ring two. A $420 double-torsion spring replacement was booked and gone.\n\nMore ad spend does not fix an unmonitored phone line when your techs are up on ladders or driving service vans.\n\nSee how much missed calls could be costing your shop each month with our interactive tool:\n👉 https://garage-door-lost-revenue-caculator.vercel.app/\nOr drop a comment with \"CALC\" and I’ll send it over.",
+          "hashtags": [
+            "#GarageDoorRepair",
+            "#TradeContractors",
+            "#FieldServiceManagement",
+            "#SmallBusinessOwner",
+            "#ContractorOperations"
+          ],
+          "format": "portrait_4_5",
+          "status": "draft",
+          "retryCount": 0
+        },
+        "instagram": {
+          "enabled": true,
+          "caption": "Homeowner: \"I swear the door just stopped working on its own!\"\n\n*Panel 1 has a dent the exact shape of an F-150 tow hitch.* 😂\n\nEvery garage door tech knows the drill. But while you're laughing on the ladder with both hands on the winding bars, your phone is vibrating in your pocket.\n\nThat missed call? An emergency double-spring job across town. 90 seconds later, they booked your competitor.\n\nSwipe through to see the math ➡️\n\nWant to see what missed calls could be costing your business? Tap the link in our bio to calculate your missed call revenue, or DM \"CALC\" for the interactive tool:\n👉 https://garage-door-lost-revenue-caculator.vercel.app/",
+          "hashtags": [
+            "#garagedoorrepair",
+            "#garagedoors",
+            "#contractorlife",
+            "#bluecollar",
+            "#fieldservice",
+            "#tradesman",
+            "#garagedoortech"
+          ],
+          "format": "portrait_4_5",
+          "status": "draft",
+          "retryCount": 0
+        }
+      },
+      "renderedAssets": [
+        {
+          "slideIndex": 1,
+          "format": "portrait_4_5",
+          "assetId": "asset-camp-1793327328314-nvrd-1-portrait_4_5",
+          "url": "/api/assets/camp-1793327328314-nvrd_slide_1_portrait_4_5.png",
+          "filename": "camp-1793327328314-nvrd_slide_1_portrait_4_5.png",
+          "sizeBytes": 41305,
+          "renderedAt": "2026-10-30T02:33:17.477Z"
+        },
+        {
+          "slideIndex": 2,
+          "format": "portrait_4_5",
+          "assetId": "asset-camp-1793327328314-nvrd-2-portrait_4_5",
+          "url": "/api/assets/camp-1793327328314-nvrd_slide_2_portrait_4_5.png",
+          "filename": "camp-1793327328314-nvrd_slide_2_portrait_4_5.png",
+          "sizeBytes": 49416,
+          "renderedAt": "2026-10-30T02:33:18.142Z"
+        },
+        {
+          "slideIndex": 3,
+          "format": "portrait_4_5",
+          "assetId": "asset-camp-1793327328314-nvrd-3-portrait_4_5",
+          "url": "/api/assets/camp-1793327328314-nvrd_slide_3_portrait_4_5.png",
+          "filename": "camp-1793327328314-nvrd_slide_3_portrait_4_5.png",
+          "sizeBytes": 47171,
+          "renderedAt": "2026-10-30T02:33:18.874Z"
+        },
+        {
+          "slideIndex": 4,
+          "format": "portrait_4_5",
+          "assetId": "asset-camp-1793327328314-nvrd-4-portrait_4_5",
+          "url": "/api/assets/camp-1793327328314-nvrd_slide_4_portrait_4_5.png",
+          "filename": "camp-1793327328314-nvrd_slide_4_portrait_4_5.png",
+          "sizeBytes": 43518,
+          "renderedAt": "2026-10-30T02:33:19.603Z"
+        },
+        {
+          "slideIndex": 5,
+          "format": "portrait_4_5",
+          "assetId": "asset-camp-1793327328314-nvrd-5-portrait_4_5",
+          "url": "/api/assets/camp-1793327328314-nvrd_slide_5_portrait_4_5.png",
+          "filename": "camp-1793327328314-nvrd_slide_5_portrait_4_5.png",
+          "sizeBytes": 48054,
+          "renderedAt": "2026-10-30T02:33:20.290Z"
+        },
+        {
+          "slideIndex": 6,
+          "format": "portrait_4_5",
+          "assetId": "asset-camp-1793327328314-nvrd-6-portrait_4_5",
+          "url": "/api/assets/camp-1793327328314-nvrd_slide_6_portrait_4_5.png",
+          "filename": "camp-1793327328314-nvrd_slide_6_portrait_4_5.png",
+          "sizeBytes": 46133,
+          "renderedAt": "2026-10-30T02:33:20.974Z"
+        },
+        {
+          "slideIndex": 7,
+          "format": "portrait_4_5",
+          "assetId": "asset-camp-1793327328314-nvrd-7-portrait_4_5",
+          "url": "/api/assets/camp-1793327328314-nvrd_slide_7_portrait_4_5.png",
+          "filename": "camp-1793327328314-nvrd_slide_7_portrait_4_5.png",
+          "sizeBytes": 41436,
+          "renderedAt": "2026-10-30T02:33:21.592Z"
+        }
+      ],
+      "createdAt": "2026-10-30T02:28:48.318Z",
+      "updatedAt": "2026-10-30T02:33:21.593Z"
+    },
+    {
       "id": "camp-demo-01",
       "title": "Dave Was Halfway Through a Spring Replacement When His Phone Rang",
       "targetAudience": "US Garage Door Service Owners & Independent Contractors",
       "pillarId": "missed-calls",
       "buyingMotivation": "make_money",
-      "ctaType": "calculator",
+      "ctaType": "bio_voice_agent",
       "objective": "Demonstrate how missed emergency repair calls during active jobs become lost revenue for garage door companies.",
       "contentAngleExplanation": "Dave is on a 10ft ladder with winding bars in hand. An emergency call comes in from a homeowner with a trapped car. He cannot answer, and the customer dials the next contractor on Google.",
       "theme": "garage-amber",
       "scheduledTime": "08:15",
       "isDemo": true,
       "createdAt": "2026-10-21T03:44:15.539Z",
-      "updatedAt": "2026-10-21T03:44:31.814Z",
+      "updatedAt": "2026-10-30T02:33:30.695Z",
       "platforms": {
         "linkedin": {
           "enabled": true,
-          "caption": "Dave was balanced on a 10-foot ladder with two winding bars in hand when his phone buzzed in his pocket.\n\nDown in Westlake, a homeowner had just pressed their garage remote to leave for work and heard a deafening bang: a broken torsion spring. Their car was trapped inside.\n\nDave couldn't let go of the high-tension spring to answer. The call went to voicemail.\n\nBy 8:22 AM, the homeowner had already dialed the next company on Google Local Services. That was an estimated $340 spring replacement job—gone in 4 minutes.\n\nIf your technicians are doing the actual physical work, who is answering your incoming calls?\n\nHow much revenue could missed calls be costing your garage door business? Run your own numbers with our free estimator:\nhttps://garage-door-lost-revenue-caculator.vercel.app/\n\n#GarageDoorRepair #TradeContractors #FieldService #SmallBusinessOperations #ContractorLife",
+          "caption": "Dave was balanced on a 10-foot ladder with two winding bars in hand when his phone buzzed in his pocket.\n\nDown in Westlake, a homeowner had just pressed their garage remote to leave for work and heard a deafening bang: a broken torsion spring. Their car was trapped inside.\n\nDave couldn't let go of the high-tension spring to answer. The call went to voicemail.\n\nBy 8:22 AM, the homeowner had already dialed the next company on Google Local Services. That was an estimated $340 spring replacement job—gone in 4 minutes.\n\nIf your technicians are doing the actual physical work, who is answering your incoming calls?\n\nHow much revenue could missed calls be costing your garage door business? Run your own numbers with our free estimator:\n\n\n#GarageDoorRepair #TradeContractors #FieldService #SmallBusinessOperations #ContractorLife\n\nWant to hear how an AI voice agent answers and triages garage door emergency calls 24/7? Head over to the link in our bio to listen to the live voice demo.\n(Or dial our live 24/7 contractor test line: (844) 385-DOOR)",
           "hashtags": [
             "#GarageDoorRepair",
             "#TradeContractors",
@@ -146,7 +364,7 @@
         },
         "instagram": {
           "enabled": true,
-          "caption": "Dave was halfway through winding a high-tension spring when his phone started ringing. 📞\n\nSwipe ➡️ to see what happened next—and why a 3-minute missed call cost his garage door business a $340 job.\n\n💡 How much revenue is slipping through your unanswered calls? Test your own numbers with the free calculator link below:\nhttps://garage-door-lost-revenue-caculator.vercel.app/\n\n#garagedoor #garagedoorrepair #contractorlife #tradesman #fieldservice #smallbusinessowner",
+          "caption": "Dave was halfway through winding a high-tension spring when his phone started ringing. 📞\n\nSwipe ➡️ to see what happened next—and why a 3-minute missed call cost his garage door business a $340 job.\n\n💡 How much revenue is slipping through your unanswered calls? Test your own numbers with the free calculator link below:\n\n\n#garagedoor #garagedoorrepair #contractorlife #tradesman #fieldservice #smallbusinessowner\n\n🎧 Curious how an AI voice agent answers and triages garage door emergency calls? Tap the link in our bio to test the live voice assistant demo right now!",
           "hashtags": [
             "#garagedoor",
             "#garagedoorrepair",
@@ -247,16 +465,15 @@
         },
         {
           "slideNumber": 7,
-          "headline": "How Much Are Missed Calls Costing You?",
-          "bodyText": "Stop guessing. Plug your own company numbers into our free garage door revenue-loss calculator:",
+          "headline": "Hear The Garage Door AI Call Handler in Action",
+          "bodyText": "Tap the link in our bio to test our live AI voice agent demo and hear how it captures emergency repair jobs.",
           "supportingLabel": "REVENUE AUDIT",
           "layoutType": "cta_action",
-          "icon": "dollar-sign",
+          "icon": "phone-call",
           "highlightMetric": {
-            "value": "CALCULATE NOW",
-            "label": "https://garage-door-lost-revenue-caculator.vercel.app/"
+            "value": "LINK IN BIO",
+            "label": "Live Voice Agent Demo"
           },
-          "ctaUrl": "https://garage-door-lost-revenue-caculator.vercel.app/",
           "bulletPoints": [
             "Enter your average ticket size ($280 - $450)",
             "Enter your estimated weekly missed calls",
@@ -271,8 +488,8 @@
           "assetId": "asset-camp-demo-01-1-portrait_4_5",
           "url": "/api/assets/camp-demo-01_slide_1_portrait_4_5.png",
           "filename": "camp-demo-01_slide_1_portrait_4_5.png",
-          "sizeBytes": 58324,
-          "renderedAt": "2026-10-21T03:44:28.435Z"
+          "sizeBytes": 68858,
+          "renderedAt": "2026-10-30T02:33:23.076Z"
         },
         {
           "slideIndex": 2,
@@ -280,8 +497,8 @@
           "assetId": "asset-camp-demo-01-2-portrait_4_5",
           "url": "/api/assets/camp-demo-01_slide_2_portrait_4_5.png",
           "filename": "camp-demo-01_slide_2_portrait_4_5.png",
-          "sizeBytes": 58741,
-          "renderedAt": "2026-10-21T03:44:29.042Z"
+          "sizeBytes": 69003,
+          "renderedAt": "2026-10-30T02:33:24.598Z"
         },
         {
           "slideIndex": 3,
@@ -289,8 +506,8 @@
           "assetId": "asset-camp-demo-01-3-portrait_4_5",
           "url": "/api/assets/camp-demo-01_slide_3_portrait_4_5.png",
           "filename": "camp-demo-01_slide_3_portrait_4_5.png",
-          "sizeBytes": 70682,
-          "renderedAt": "2026-10-21T03:44:29.642Z"
+          "sizeBytes": 72123,
+          "renderedAt": "2026-10-30T02:33:26.062Z"
         },
         {
           "slideIndex": 4,
@@ -298,8 +515,8 @@
           "assetId": "asset-camp-demo-01-4-portrait_4_5",
           "url": "/api/assets/camp-demo-01_slide_4_portrait_4_5.png",
           "filename": "camp-demo-01_slide_4_portrait_4_5.png",
-          "sizeBytes": 64055,
-          "renderedAt": "2026-10-21T03:44:30.165Z"
+          "sizeBytes": 69722,
+          "renderedAt": "2026-10-30T02:33:27.199Z"
         },
         {
           "slideIndex": 5,
@@ -307,8 +524,8 @@
           "assetId": "asset-camp-demo-01-5-portrait_4_5",
           "url": "/api/assets/camp-demo-01_slide_5_portrait_4_5.png",
           "filename": "camp-demo-01_slide_5_portrait_4_5.png",
-          "sizeBytes": 59062,
-          "renderedAt": "2026-10-21T03:44:30.688Z"
+          "sizeBytes": 73080,
+          "renderedAt": "2026-10-30T02:33:28.285Z"
         },
         {
           "slideIndex": 6,
@@ -316,8 +533,8 @@
           "assetId": "asset-camp-demo-01-6-portrait_4_5",
           "url": "/api/assets/camp-demo-01_slide_6_portrait_4_5.png",
           "filename": "camp-demo-01_slide_6_portrait_4_5.png",
-          "sizeBytes": 68165,
-          "renderedAt": "2026-10-21T03:44:31.195Z"
+          "sizeBytes": 73566,
+          "renderedAt": "2026-10-30T02:33:29.471Z"
         },
         {
           "slideIndex": 7,
@@ -325,8 +542,8 @@
           "assetId": "asset-camp-demo-01-7-portrait_4_5",
           "url": "/api/assets/camp-demo-01_slide_7_portrait_4_5.png",
           "filename": "camp-demo-01_slide_7_portrait_4_5.png",
-          "sizeBytes": 65795,
-          "renderedAt": "2026-10-21T03:44:31.813Z"
+          "sizeBytes": 77470,
+          "renderedAt": "2026-10-30T02:33:30.694Z"
         }
       ]
     },
@@ -336,18 +553,18 @@
       "targetAudience": "US Garage Door Business Owners & Technicians",
       "pillarId": "after-hours",
       "buyingMotivation": "reduce_pain",
-      "ctaType": "dm_calculator",
+      "ctaType": "bio_hub",
       "objective": "Illustrate the emotional toll of late-night calls and show how automated triage protects sleep and family time.",
       "contentAngleExplanation": "An owner exhausted after a 10-hour day gets a midnight call about a door stuck open. They need a system that triages real emergencies from routine sensor misalignment.",
       "theme": "modern-navy",
       "scheduledTime": "11:45",
       "isDemo": true,
       "createdAt": "2026-10-21T03:44:15.540Z",
-      "updatedAt": "2026-10-21T03:44:35.388Z",
+      "updatedAt": "2026-10-30T02:33:34.353Z",
       "platforms": {
         "linkedin": {
           "enabled": true,
-          "caption": "It's 11:07 PM. You've just fallen asleep after a grueling 10-hour day hanging doors in 90-degree heat.\n\nYour bedside phone buzzes. A homeowner is frantic because their garage door reversed and is stuck 3 feet off the ground, leaving their tools and home exposed.\n\nYou pick up half-asleep, heart racing, only to discover the homeowner accidentally kicked a photo-eye sensor out of alignment.\n\nThis is the hidden tax of running a garage door business: you either answer everything yourself and burn out, or you turn your phone off and risk losing high-margin emergency jobs.\n\nHere is how smart call handling triages midnight calls: checking simple sensor issues first, quoting after-hours policies, and alerting your on-call technician only when a real truck roll is required.\n\n\n\n#GarageDoorContractors #TradeBusiness #ContractorBurnout #FieldServiceManagement #SmallBusinessFreedom\n\nDM me CALCULATOR and I’ll send you the free garage door revenue-loss calculator.",
+          "caption": "It's 11:07 PM. You've just fallen asleep after a grueling 10-hour day hanging doors in 90-degree heat.\n\nYour bedside phone buzzes. A homeowner is frantic because their garage door reversed and is stuck 3 feet off the ground, leaving their tools and home exposed.\n\nYou pick up half-asleep, heart racing, only to discover the homeowner accidentally kicked a photo-eye sensor out of alignment.\n\nThis is the hidden tax of running a garage door business: you either answer everything yourself and burn out, or you turn your phone off and risk losing high-margin emergency jobs.\n\nHere is how smart call handling triages midnight calls: checking simple sensor issues first, quoting after-hours policies, and alerting your on-call technician only when a real truck roll is required.\n\n\n\n#GarageDoorContractors #TradeBusiness #ContractorBurnout #FieldServiceManagement #SmallBusinessFreedom\n\nReady to stop evening phone tag and protect high-margin repair jobs? Tap the link in our bio to access both the free revenue calculator and live AI voice triage demo.",
           "hashtags": [
             "#GarageDoorContractors",
             "#TradeBusiness",
@@ -360,7 +577,7 @@
         },
         "instagram": {
           "enabled": true,
-          "caption": "11:07 PM. Your phone rings. Do you answer half-asleep or let it go to voicemail? 🌙\n\nSwipe ➡️ to see how top garage door operators triage late-night calls without sacrificing their sleep or family time.\n\n💬 \n\n#garagedoors #garagedoorrepair #contractorlife #tradesman #emergencyservice\n\n💬 DM me CALCULATOR and I’ll send you the free garage door revenue-loss calculator.",
+          "caption": "11:07 PM. Your phone rings. Do you answer half-asleep or let it go to voicemail? 🌙\n\nSwipe ➡️ to see how top garage door operators triage late-night calls without sacrificing their sleep or family time.\n\n💬 \n\n#garagedoors #garagedoorrepair #contractorlife #tradesman #emergencyservice\n\n💬\n\n🛠️ Stop letting high-ticket jobs slip to competitors while you're on a ladder. Tap the link in our bio to access our free revenue calculator and live AI call agent demo!",
           "hashtags": [
             "#garagedoors",
             "#garagedoorrepair",
@@ -461,14 +678,14 @@
         },
         {
           "slideNumber": 7,
-          "headline": "Want to Run Your Garage Door Business Numbers?",
-          "bodyText": "DM me CALCULATOR and I’ll send you the free garage door revenue-loss calculator.",
+          "headline": "Stop Losing Emergency Calls While On The Ladder",
+          "bodyText": "Tap the link in our bio to access our free garage door revenue calculator and live AI call agent demo.",
           "supportingLabel": "REVENUE AUDIT",
           "layoutType": "cta_action",
-          "icon": "message-square",
+          "icon": "dollar-sign",
           "highlightMetric": {
-            "value": "DM \"CALCULATOR\"",
-            "label": "Direct Message For Free Link"
+            "value": "LINK IN BIO",
+            "label": "Calculator & Voice Demo"
           },
           "bulletPoints": [
             "No high-pressure sales pitch. Just honest trade call triage.",
@@ -484,8 +701,8 @@
           "assetId": "asset-camp-demo-02-1-portrait_4_5",
           "url": "/api/assets/camp-demo-02_slide_1_portrait_4_5.png",
           "filename": "camp-demo-02_slide_1_portrait_4_5.png",
-          "sizeBytes": 53072,
-          "renderedAt": "2026-10-21T03:44:32.291Z"
+          "sizeBytes": 54694,
+          "renderedAt": "2026-10-30T02:33:31.225Z"
         },
         {
           "slideIndex": 2,
@@ -493,8 +710,8 @@
           "assetId": "asset-camp-demo-02-2-portrait_4_5",
           "url": "/api/assets/camp-demo-02_slide_2_portrait_4_5.png",
           "filename": "camp-demo-02_slide_2_portrait_4_5.png",
-          "sizeBytes": 56287,
-          "renderedAt": "2026-10-21T03:44:32.835Z"
+          "sizeBytes": 63888,
+          "renderedAt": "2026-10-30T02:33:31.731Z"
         },
         {
           "slideIndex": 3,
@@ -502,8 +719,8 @@
           "assetId": "asset-camp-demo-02-3-portrait_4_5",
           "url": "/api/assets/camp-demo-02_slide_3_portrait_4_5.png",
           "filename": "camp-demo-02_slide_3_portrait_4_5.png",
-          "sizeBytes": 58672,
-          "renderedAt": "2026-10-21T03:44:33.351Z"
+          "sizeBytes": 64141,
+          "renderedAt": "2026-10-30T02:33:32.275Z"
         },
         {
           "slideIndex": 4,
@@ -511,8 +728,8 @@
           "assetId": "asset-camp-demo-02-4-portrait_4_5",
           "url": "/api/assets/camp-demo-02_slide_4_portrait_4_5.png",
           "filename": "camp-demo-02_slide_4_portrait_4_5.png",
-          "sizeBytes": 61738,
-          "renderedAt": "2026-10-21T03:44:33.861Z"
+          "sizeBytes": 57440,
+          "renderedAt": "2026-10-30T02:33:32.780Z"
         },
         {
           "slideIndex": 5,
@@ -520,8 +737,8 @@
           "assetId": "asset-camp-demo-02-5-portrait_4_5",
           "url": "/api/assets/camp-demo-02_slide_5_portrait_4_5.png",
           "filename": "camp-demo-02_slide_5_portrait_4_5.png",
-          "sizeBytes": 69321,
-          "renderedAt": "2026-10-21T03:44:34.391Z"
+          "sizeBytes": 65443,
+          "renderedAt": "2026-10-30T02:33:33.305Z"
         },
         {
           "slideIndex": 6,
@@ -529,8 +746,8 @@
           "assetId": "asset-camp-demo-02-6-portrait_4_5",
           "url": "/api/assets/camp-demo-02_slide_6_portrait_4_5.png",
           "filename": "camp-demo-02_slide_6_portrait_4_5.png",
-          "sizeBytes": 60952,
-          "renderedAt": "2026-10-21T03:44:34.877Z"
+          "sizeBytes": 56595,
+          "renderedAt": "2026-10-30T02:33:33.820Z"
         },
         {
           "slideIndex": 7,
@@ -538,8 +755,8 @@
           "assetId": "asset-camp-demo-02-7-portrait_4_5",
           "url": "/api/assets/camp-demo-02_slide_7_portrait_4_5.png",
           "filename": "camp-demo-02_slide_7_portrait_4_5.png",
-          "sizeBytes": 61498,
-          "renderedAt": "2026-10-21T03:44:35.388Z"
+          "sizeBytes": 64836,
+          "renderedAt": "2026-10-30T02:33:34.352Z"
         }
       ]
     },
@@ -549,18 +766,18 @@
       "targetAudience": "Garage Door Company Owners & Dispatch Managers",
       "pillarId": "lead-capture-booking",
       "buyingMotivation": "gain_time",
-      "ctaType": "calculator",
+      "ctaType": "dm_calc_or_voice",
       "objective": "Address owner time-freedom, eliminating the 2 hours wasted on voicemail tag and phone interruptions every evening.",
       "contentAngleExplanation": "Owners finish physical jobs only to spend 2 hours returning voicemails, playing phone tag with cold leads, and missing dinner with their kids.",
       "theme": "precision-blueprint",
       "scheduledTime": "15:30",
       "isDemo": true,
       "createdAt": "2026-10-21T03:44:15.540Z",
-      "updatedAt": "2026-10-21T03:44:38.801Z",
+      "updatedAt": "2026-10-30T02:33:34.355Z",
       "platforms": {
         "linkedin": {
           "enabled": true,
-          "caption": "Ask most garage door business owners why they started their own company, and they will say the same thing: freedom.\n\nYet by 5:30 PM, after driving 120 miles and completing 4 torsion spring replacements, the owner sits in their truck or at the kitchen table with 8 voicemails on their phone.\n\nNext comes 2 hours of phone tag:\n\"Hey, this is Mike returning your call about the garage door...\"\n\"Oh, thanks Mike, but we already got someone out here 3 hours ago.\"\n\nYou missed dinner with your kids, and you still lost the job.\n\nIf you got two hours a day back, what would you do with them? Spend time with family? Focus on hiring your next technician? Actually take a weekend off?\n\nFind out what unanswered calls and callback delays could be costing your garage door business. Plug your numbers into our free revenue-loss calculator:\nhttps://garage-door-lost-revenue-caculator.vercel.app/\n\n#GarageDoorBusiness #ContractorFreedom #FieldServiceManagement #SmallBusinessOwner #TimeFreedom",
+          "caption": "Ask most garage door business owners why they started their own company, and they will say the same thing: freedom.\n\nYet by 5:30 PM, after driving 120 miles and completing 4 torsion spring replacements, the owner sits in their truck or at the kitchen table with 8 voicemails on their phone.\n\nNext comes 2 hours of phone tag:\n\"Hey, this is Mike returning your call about the garage door...\"\n\"Oh, thanks Mike, but we already got someone out here 3 hours ago.\"\n\nYou missed dinner with your kids, and you still lost the job.\n\nIf you got two hours a day back, what would you do with them? Spend time with family? Focus on hiring your next technician? Actually take a weekend off?\n\nFind out what unanswered calls and callback delays could be costing your garage door business. Plug your numbers into our free revenue-loss calculator:\n\n\n#GarageDoorBusiness #ContractorFreedom #FieldServiceManagement #SmallBusinessOwner #TimeFreedom\n\nWant the direct link sent to your inbox? DM me \"CALC\" for the free revenue calculator or \"VOICE\" for the live AI voice demo link.",
           "hashtags": [
             "#GarageDoorBusiness",
             "#ContractorFreedom",
@@ -573,7 +790,7 @@
         },
         "instagram": {
           "enabled": true,
-          "caption": "If you got two hours a day back, what would you do with them? ⏳\n\nSwipe ➡️ to see how top garage door owners eliminated evening voicemail tag and got their family dinners back.\n\n📊 Estimate what missed calls are costing your business: https://garage-door-lost-revenue-caculator.vercel.app/\n\n#garagedoor #contractortime #tradesman #businessfreedom #workliferedefined",
+          "caption": "If you got two hours a day back, what would you do with them? ⏳\n\nSwipe ➡️ to see how top garage door owners eliminated evening voicemail tag and got their family dinners back.\n\n📊 Estimate what missed calls are costing your business: \n\n#garagedoor #contractortime #tradesman #businessfreedom #workliferedefined\n\n💬 Want the direct links sent to your inbox? Send a DM with \"CALC\" for the free revenue calculator or \"VOICE\" for the live AI call agent demo, and we'll message them right over!",
           "hashtags": [
             "#garagedoor",
             "#contractortime",
@@ -674,16 +891,15 @@
         },
         {
           "slideNumber": 7,
-          "headline": "Estimate Your Potential Revenue Gap",
-          "bodyText": "Find out what unanswered calls and callback delays could be costing your garage door business:",
+          "headline": "Want The Free Calculator or Voice Demo?",
+          "bodyText": "Send us a direct message with \"CALC\" or \"VOICE\" and we will send the direct link straight to your inbox.",
           "supportingLabel": "REVENUE AUDIT",
           "layoutType": "cta_action",
-          "icon": "dollar-sign",
+          "icon": "message-square",
           "highlightMetric": {
-            "value": "CALCULATE NOW",
-            "label": "https://garage-door-lost-revenue-caculator.vercel.app/"
+            "value": "DM \"CALC\"",
+            "label": "Direct Link to Your Inbox"
           },
-          "ctaUrl": "https://garage-door-lost-revenue-caculator.vercel.app/",
           "bulletPoints": [
             "Enter your average garage door repair ticket",
             "See how recovering 2 calls a week impacts your bottom line",
@@ -698,8 +914,8 @@
           "assetId": "asset-camp-demo-03-1-portrait_4_5",
           "url": "/api/assets/camp-demo-03_slide_1_portrait_4_5.png",
           "filename": "camp-demo-03_slide_1_portrait_4_5.png",
-          "sizeBytes": 50573,
-          "renderedAt": "2026-10-21T03:44:35.858Z"
+          "sizeBytes": 52472,
+          "renderedAt": "2026-10-30T02:33:21.633Z"
         },
         {
           "slideIndex": 2,
@@ -707,8 +923,8 @@
           "assetId": "asset-camp-demo-03-2-portrait_4_5",
           "url": "/api/assets/camp-demo-03_slide_2_portrait_4_5.png",
           "filename": "camp-demo-03_slide_2_portrait_4_5.png",
-          "sizeBytes": 62076,
-          "renderedAt": "2026-10-21T03:44:36.343Z"
+          "sizeBytes": 59494,
+          "renderedAt": "2026-10-30T02:33:22.283Z"
         },
         {
           "slideIndex": 3,
@@ -716,8 +932,8 @@
           "assetId": "asset-camp-demo-03-3-portrait_4_5",
           "url": "/api/assets/camp-demo-03_slide_3_portrait_4_5.png",
           "filename": "camp-demo-03_slide_3_portrait_4_5.png",
-          "sizeBytes": 58383,
-          "renderedAt": "2026-10-21T03:44:36.830Z"
+          "sizeBytes": 59876,
+          "renderedAt": "2026-10-30T02:33:22.979Z"
         },
         {
           "slideIndex": 4,
@@ -725,8 +941,8 @@
           "assetId": "asset-camp-demo-03-4-portrait_4_5",
           "url": "/api/assets/camp-demo-03_slide_4_portrait_4_5.png",
           "filename": "camp-demo-03_slide_4_portrait_4_5.png",
-          "sizeBytes": 57387,
-          "renderedAt": "2026-10-21T03:44:37.326Z"
+          "sizeBytes": 56065,
+          "renderedAt": "2026-10-30T02:33:23.719Z"
         },
         {
           "slideIndex": 5,
@@ -734,8 +950,8 @@
           "assetId": "asset-camp-demo-03-5-portrait_4_5",
           "url": "/api/assets/camp-demo-03_slide_5_portrait_4_5.png",
           "filename": "camp-demo-03_slide_5_portrait_4_5.png",
-          "sizeBytes": 57405,
-          "renderedAt": "2026-10-21T03:44:37.796Z"
+          "sizeBytes": 58667,
+          "renderedAt": "2026-10-30T02:33:24.430Z"
         },
         {
           "slideIndex": 6,
@@ -743,8 +959,8 @@
           "assetId": "asset-camp-demo-03-6-portrait_4_5",
           "url": "/api/assets/camp-demo-03_slide_6_portrait_4_5.png",
           "filename": "camp-demo-03_slide_6_portrait_4_5.png",
-          "sizeBytes": 63438,
-          "renderedAt": "2026-10-21T03:44:38.291Z"
+          "sizeBytes": 58077,
+          "renderedAt": "2026-10-30T02:33:25.053Z"
         },
         {
           "slideIndex": 7,
@@ -752,8 +968,8 @@
           "assetId": "asset-camp-demo-03-7-portrait_4_5",
           "url": "/api/assets/camp-demo-03_slide_7_portrait_4_5.png",
           "filename": "camp-demo-03_slide_7_portrait_4_5.png",
-          "sizeBytes": 57529,
-          "renderedAt": "2026-10-21T03:44:38.800Z"
+          "sizeBytes": 56508,
+          "renderedAt": "2026-10-30T02:33:25.721Z"
         }
       ]
     },
@@ -972,6 +1188,124 @@
   ],
   "logs": [
     {
+      "campaignId": "camp-demo-02",
+      "campaignTitle": "It’s 11:07 P.M. A Homeowner’s Garage Door Won’t Close.",
+      "platform": "linkedin",
+      "action": "render",
+      "status": "success",
+      "message": "Rendered 7 slides as high-res PNGs (portrait_4_5).",
+      "details": {
+        "slideCount": 7,
+        "totalBytes": 427037
+      },
+      "id": "log-1793327614354-f99g5",
+      "timestamp": "2026-10-30T02:33:34.354Z"
+    },
+    {
+      "campaignId": "camp-demo-01",
+      "campaignTitle": "Dave Was Halfway Through a Spring Replacement When His Phone Rang",
+      "platform": "linkedin",
+      "action": "render",
+      "status": "success",
+      "message": "Rendered 7 slides as high-res PNGs (portrait_4_5).",
+      "details": {
+        "slideCount": 7,
+        "totalBytes": 503822
+      },
+      "id": "log-1793327610695-p29iy",
+      "timestamp": "2026-10-30T02:33:30.695Z"
+    },
+    {
+      "campaignId": "camp-demo-03",
+      "campaignTitle": "If You Got Two Hours a Day Back, What Would You Do With Them?",
+      "platform": "linkedin",
+      "action": "render",
+      "status": "success",
+      "message": "Rendered 7 slides as high-res PNGs (portrait_4_5).",
+      "details": {
+        "slideCount": 7,
+        "totalBytes": 401159
+      },
+      "id": "log-1793327605722-o5irc",
+      "timestamp": "2026-10-30T02:33:25.722Z"
+    },
+    {
+      "campaignId": "camp-1793327328314-nvrd",
+      "campaignTitle": "The Universal Law of Torsion Springs & Missed Revenue",
+      "platform": "linkedin",
+      "action": "render",
+      "status": "success",
+      "message": "Rendered 7 slides as high-res PNGs (portrait_4_5).",
+      "details": {
+        "slideCount": 7,
+        "totalBytes": 317033
+      },
+      "id": "log-1793327601593-gengi",
+      "timestamp": "2026-10-30T02:33:21.593Z"
+    },
+    {
+      "campaignId": "camp-demo-02",
+      "campaignTitle": "It’s 11:07 P.M. A Homeowner’s Garage Door Won’t Close.",
+      "platform": "linkedin",
+      "action": "render",
+      "status": "success",
+      "message": "Rendered 7 slides as high-res PNGs (portrait_4_5).",
+      "details": {
+        "slideCount": 7,
+        "totalBytes": 427037
+      },
+      "id": "log-1793327600766-gdo3h",
+      "timestamp": "2026-10-30T02:33:20.766Z"
+    },
+    {
+      "campaignId": "camp-demo-01",
+      "campaignTitle": "Dave Was Halfway Through a Spring Replacement When His Phone Rang",
+      "platform": "linkedin",
+      "action": "render",
+      "status": "success",
+      "message": "Rendered 7 slides as high-res PNGs (portrait_4_5).",
+      "details": {
+        "slideCount": 7,
+        "totalBytes": 503822
+      },
+      "id": "log-1793327595747-nlkpu",
+      "timestamp": "2026-10-30T02:33:15.747Z"
+    },
+    {
+      "campaignId": "system",
+      "campaignTitle": "Continuous Autonomous Content Engine",
+      "platform": "instagram",
+      "action": "scheduled_trigger",
+      "status": "success",
+      "message": "Generated and rendered 0 fresh, unique 7-slide campaigns for 2026-10-29 (2x Calculator, 2x Alternative CTAs).",
+      "id": "log-1793327593158-3v7x7",
+      "timestamp": "2026-10-30T02:33:13.158Z"
+    },
+    {
+      "campaignId": "camp-1793327328314-nvrd",
+      "campaignTitle": "The Universal Law of Torsion Springs & Missed Revenue",
+      "platform": "linkedin",
+      "action": "render",
+      "status": "success",
+      "message": "Rendered 7 slides as high-res PNGs (portrait_4_5).",
+      "details": {
+        "slideCount": 7,
+        "totalBytes": 317033
+      },
+      "id": "log-1793327587831-wxf73",
+      "timestamp": "2026-10-30T02:33:07.831Z"
+    },
+    {
+      "campaignId": "camp-1793327328314-nvrd",
+      "campaignTitle": "The Universal Law of Torsion Springs & Missed Revenue",
+      "platform": "linkedin",
+      "action": "scheduled_trigger",
+      "status": "success",
+      "message": "Generated 7-slide campaign [Motivation: make_money, CTA: calculator] using gemini-3.8-flash.",
+      "id": "log-1793327328320-ch0gp",
+      "timestamp": "2026-10-30T02:28:48.320Z"
+    },
+    {
       "campaignId": "camp-demo-04",
       "campaignTitle": "You Paid $65 for The Google Lead. Who Answered The Phone?",
       "platform": "linkedin",
@@ -1039,12 +1373,12 @@
     }
   ],
   "usage": {
-    "todayGeminiRequests": 0,
-    "todayGeminiEstimatedTokens": 0,
+    "todayGeminiRequests": 1,
+    "todayGeminiEstimatedTokens": 1400,
     "todayPostsLinkedIn": 0,
     "todayPostsInstagram": 0,
-    "todayRenderedAssetsCount": 0,
-    "totalAssetsDiskBytes": 1606236,
+    "todayRenderedAssetsCount": 53,
+    "totalAssetsDiskBytes": 4731086,
     "lastQuotaResetDate": "2026-10-30",
     "maxDailyGeminiRequests": 50,
     "maxDailyPostsPerPlatform": 4

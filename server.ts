@@ -573,7 +573,7 @@ app.post('/api/campaigns/enforce-ctas', async (req, res) => {
       validation,
       campaigns: db.getCampaigns(),
       message: validation.valid
-        ? 'All 4 posts adhere to the CTA rotation rules (2x Calculator, 2x Distinct Alternative CTAs).'
+        ? 'All 4 daily posts adhere to the CTA rules (3x Bio Link: Calculator, Voice Demo, Hub + 1x DM "CALC"/"VOICE").'
         : `CTA rules enforced and revised (${validation.issues.length} adjustments made).`,
     });
   } catch (err: unknown) {

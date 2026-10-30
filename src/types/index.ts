@@ -30,19 +30,25 @@ export type SlideLayoutType =
 export type BuyingMotivation = 'make_money' | 'reduce_pain' | 'gain_time' | 'reduce_waste';
 
 export type CtaType =
-  | 'calculator' // Direct link to Revenue-Loss Calculator (2 posts/day required)
-  | 'dm_calculator' // "DM me CALCULATOR and I'll send you the free revenue-loss calculator"
-  | 'demo_cta' // "Want to hear how an AI voice agent handles garage door calls? Go to the link in my bio and call the demo yourself."
-  | 'dm_conversation' // "Interested in handling more missed calls? DM me and let's talk."
-  | 'demo_call' // Alias for demo_cta
-  | 'pilot_invite' // Legacy fallback
-  | 'checklist'; // Legacy fallback
+  | 'bio_calculator' // Post 1: Link in bio to get the free revenue-loss calculator
+  | 'bio_voice_agent' // Post 2: Link in bio to test the live AI voice agent demo
+  | 'bio_hub' // Post 3: Link in bio to access both calculator and voice demo
+  | 'dm_calc_or_voice' // Post 4: DM "CALC" or "VOICE" for direct link
+  | 'calculator' // Backward-compatible alias
+  | 'dm_calculator' // Backward-compatible alias
+  | 'demo_cta' // Backward-compatible alias
+  | 'dm_conversation' // Backward-compatible alias
+  | 'demo_call'
+  | 'pilot_invite'
+  | 'checklist';
 
 export interface CtaBatchValidation {
   valid: boolean;
-  calculatorCount: number;
-  alternativeCount: number;
-  distinctAlternativesCount: number;
+  bioLinkCount: number; // Exactly 3 posts leading to bio (calculator, voice agent, hub)
+  dmKeywordCount: number; // Exactly 1 post leading to DM (DM "CALC" or "VOICE")
+  calculatorCount?: number;
+  alternativeCount?: number;
+  distinctAlternativesCount?: number;
   issues: string[];
 }
 

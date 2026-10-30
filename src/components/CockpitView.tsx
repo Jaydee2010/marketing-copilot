@@ -259,13 +259,13 @@ export const CockpitView: React.FC<CockpitViewProps> = ({
           </div>
           <div>
             <div className="text-xs font-bold text-white flex items-center gap-2">
-              <span>Daily CTA Rotation Rules</span>
+              <span>Daily CTA Distribution Rules</span>
               <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                2x Calculator + 2x Alternative CTAs
+                3x Bio Link (Hub/Linktree) + 1x Direct DM
               </span>
             </div>
             <p className="text-[11px] text-slate-400 mt-0.5">
-              Strictly balances 2 revenue-loss calculator URLs with 2 distinct DM/Demo voice agent prompts daily.
+              3 posts direct traffic to the link in bio (calculator & voice agent demo hub) + 1 post invites direct message with "CALC" or "VOICE".
             </p>
           </div>
         </div>
@@ -305,14 +305,11 @@ export const CockpitView: React.FC<CockpitViewProps> = ({
             const ig = campaign.platforms.instagram;
             const hasRenderedAssets = campaign.renderedAssets && campaign.renderedAssets.length >= 7;
 
-            const isCalc =
-              campaign.ctaType === 'calculator' ||
-              campaign.platforms.linkedin.caption.includes('caculator') ||
-              campaign.slides.some((s) => s.ctaUrl?.includes('caculator'));
-
-            const isDmCalc = campaign.ctaType === 'dm_calculator';
-            const isDemo = campaign.ctaType === 'demo_cta' || campaign.ctaType === 'demo_call';
-            const isConversation = campaign.ctaType === 'dm_conversation';
+            const ctaTypeNorm = campaign.ctaType || 'bio_calculator';
+            const isBioCalc = ctaTypeNorm === 'bio_calculator' || ctaTypeNorm === 'calculator';
+            const isBioVoice = ctaTypeNorm === 'bio_voice_agent' || ctaTypeNorm === 'demo_cta' || ctaTypeNorm === 'demo_call';
+            const isBioHub = ctaTypeNorm === 'bio_hub';
+            const isDmKeyword = ctaTypeNorm === 'dm_calc_or_voice' || ctaTypeNorm === 'dm_calculator' || ctaTypeNorm === 'dm_conversation';
 
             return (
               <div
@@ -338,25 +335,21 @@ export const CockpitView: React.FC<CockpitViewProps> = ({
                       )}
 
                       {/* Explicit CTA Badge */}
-                      {isCalc ? (
+                      {isBioCalc ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                          <Calculator className="w-3 h-3" /> CALCULATOR CTA (URL)
+                          <Calculator className="w-3 h-3" /> BIO LINK: CALCULATOR
                         </span>
-                      ) : isDmCalc ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
-                          <MessageSquare className="w-3 h-3" /> DM CALCULATOR
-                        </span>
-                      ) : isDemo ? (
+                      ) : isBioVoice ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/30">
-                          <PhoneCall className="w-3 h-3" /> DEMO AGENT CTA
+                          <PhoneCall className="w-3 h-3" /> BIO LINK: VOICE AGENT
                         </span>
-                      ) : isConversation ? (
+                      ) : isBioHub ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-500/15 text-purple-400 border border-purple-500/30">
-                          <MessageSquare className="w-3 h-3" /> CONVERSATION CTA
+                          <CheckCheck className="w-3 h-3" /> BIO LINK: CALCULATOR + VOICE
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-800 text-slate-400 border border-slate-700">
-                          {campaign.ctaType}
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                          <MessageSquare className="w-3 h-3" /> DM "CALC" / "VOICE"
                         </span>
                       )}
 

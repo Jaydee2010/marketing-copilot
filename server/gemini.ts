@@ -131,77 +131,83 @@ async function retryWithBackoff<T>(fn: () => Promise<T>, maxRetries = 3, initial
  * Normalizes CTA type into one of the four official types:
  * 'calculator' | 'dm_calculator' | 'demo_cta' | 'dm_conversation'
  */
-export function normalizeCtaType(cta?: string): 'calculator' | 'dm_calculator' | 'demo_cta' | 'dm_conversation' {
-  if (!cta) return 'calculator';
-  if (cta === 'calculator') return 'calculator';
-  if (cta === 'dm_calculator') return 'dm_calculator';
-  if (cta === 'demo_cta' || cta === 'demo_call') return 'demo_cta';
-  if (cta === 'dm_conversation') return 'dm_conversation';
-  return 'calculator';
+export function normalizeCtaType(cta?: string): 'bio_calculator' | 'bio_voice_agent' | 'bio_hub' | 'dm_calc_or_voice' {
+  if (!cta) return 'bio_calculator';
+  if (cta === 'bio_calculator' || cta === 'calculator') return 'bio_calculator';
+  if (cta === 'bio_voice_agent' || cta === 'demo_cta' || cta === 'demo_call') return 'bio_voice_agent';
+  if (cta === 'bio_hub') return 'bio_hub';
+  if (cta === 'dm_calc_or_voice' || cta === 'dm_calculator' || cta === 'dm_conversation') return 'dm_calc_or_voice';
+  return 'bio_calculator';
 }
 
 /**
  * Returns platform-adapted caption and Slide 7 copy for a given CTA
+ * Rule: 3 posts leading to bio (calculator, voice agent, or hub) + 1 post leading to DM ("CALC" or "VOICE")
  */
 export function getCtaCopy(ctaType: CtaType, rotationVariantIndex = 0, demoPhoneNumber = '(844) 385-DOOR') {
   const normalized = normalizeCtaType(ctaType);
 
-  if (normalized === 'calculator') {
-    const variantText = CALCULATOR_CTA_VARIANTS[rotationVariantIndex % CALCULATOR_CTA_VARIANTS.length];
+  if (normalized === 'bio_calculator') {
     return {
-      type: 'calculator' as const,
+      type: 'bio_calculator' as const,
       url: CALCULATOR_URL,
-      linkedinCta: `\n\n${variantText}`,
-      instagramCta: `\n\n📊 Want to run your numbers? Tap the link in our bio to open the free Garage Door Revenue-Loss Calculator! Or drop a comment with "CALC" / DM us "CALC" and we'll send the direct interactive link straight to your inbox!`,
-      slideHeadline: 'How Much Revenue Could Missed Calls Be Costing You?',
-      slideBody: 'Tap the link in our bio to calculate your missed call revenue, or DM "CALC" for the interactive tool.',
-      slideActionText: '🔗 LINK IN BIO',
+      linkedinCta: `\n\nHow much revenue could missed calls be costing your garage door business? Run your own numbers with our free contractor calculator: tap the link in our bio (or visit https://garage-door-lost-revenue-caculator.vercel.app/).`,
+      instagramCta: `\n\n📊 Want to run your numbers? Tap the link in our bio to calculate how much revenue missed calls could be costing your garage door shop!`,
+      slideHeadline: 'How Much Revenue Are Missed Calls Costing You?',
+      slideBody: 'Tap the link in our bio to calculate your missed repair revenue with our free interactive contractor tool.',
+      slideActionText: '🔗 TAP LINK IN BIO',
       slideMetric: {
-        value: '🔗 LINK IN BIO',
-        label: 'Or DM "CALC" for direct link',
+        value: 'LINK IN BIO',
+        label: 'Free Revenue Calculator',
       },
     };
   }
 
-  if (normalized === 'dm_calculator') {
-    const copy = APPROVED_ALTERNATIVE_CTAS.dm_calculator.copy;
+  if (normalized === 'bio_voice_agent') {
     return {
-      type: 'dm_calculator' as const,
+      type: 'bio_voice_agent' as const,
       url: undefined,
-      linkedinCta: `\n\n${copy}`,
-      instagramCta: `\n\n💬 ${copy}`,
-      slideHeadline: 'Want to Run Your Garage Door Business Numbers?',
-      slideBody: copy,
-      slideActionText: 'DM "CALCULATOR" 💬',
-      slideMetric: APPROVED_ALTERNATIVE_CTAS.dm_calculator.slideMetric,
-    };
-  }
-
-  if (normalized === 'demo_cta') {
-    const copy = APPROVED_ALTERNATIVE_CTAS.demo_cta.copy;
-    return {
-      type: 'demo_cta' as const,
-      url: undefined,
-      linkedinCta: `\n\n${copy}\n(Or dial our live 24/7 test line: ${demoPhoneNumber})`,
-      instagramCta: `\n\n🎧 ${copy}`,
+      linkedinCta: `\n\nWant to hear how an AI voice agent answers and triages garage door emergency calls 24/7? Head over to the link in our bio to listen to the live voice demo.\n(Or dial our live 24/7 contractor test line: ${demoPhoneNumber})`,
+      instagramCta: `\n\n🎧 Curious how an AI voice agent answers and triages garage door emergency calls? Tap the link in our bio to test the live voice assistant demo right now!`,
       slideHeadline: 'Hear The Garage Door AI Call Handler in Action',
-      slideBody: copy,
-      slideActionText: 'TRY THE DEMO 👉',
-      slideMetric: APPROVED_ALTERNATIVE_CTAS.demo_cta.slideMetric,
+      slideBody: 'Tap the link in our bio to test our live AI voice agent demo and hear how it captures emergency repair jobs.',
+      slideActionText: '🎙️ TEST DEMO IN BIO',
+      slideMetric: {
+        value: 'LINK IN BIO',
+        label: 'Live Voice Agent Demo',
+      },
     };
   }
 
-  // dm_conversation
-  const copy = APPROVED_ALTERNATIVE_CTAS.dm_conversation.copy;
+  if (normalized === 'bio_hub') {
+    return {
+      type: 'bio_hub' as const,
+      url: undefined,
+      linkedinCta: `\n\nReady to stop evening phone tag and protect high-margin repair jobs? Tap the link in our bio to access both the free revenue calculator and live AI voice triage demo.`,
+      instagramCta: `\n\n🛠️ Stop letting high-ticket jobs slip to competitors while you're on a ladder. Tap the link in our bio to access our free revenue calculator and live AI call agent demo!`,
+      slideHeadline: 'Stop Losing Emergency Calls While On The Ladder',
+      slideBody: 'Tap the link in our bio to access our free garage door revenue calculator and live AI call agent demo.',
+      slideActionText: '🔗 CHECK LINK IN BIO',
+      slideMetric: {
+        value: 'LINK IN BIO',
+        label: 'Calculator & Voice Demo',
+      },
+    };
+  }
+
+  // dm_calc_or_voice
   return {
-    type: 'dm_conversation' as const,
+    type: 'dm_calc_or_voice' as const,
     url: undefined,
-    linkedinCta: `\n\n${copy}`,
-    instagramCta: `\n\n🤝 ${copy}`,
-    slideHeadline: 'Ready to Stop Missing High-Margin Repair Jobs?',
-    slideBody: copy,
-    slideActionText: 'SEND A DM 💬',
-    slideMetric: APPROVED_ALTERNATIVE_CTAS.dm_conversation.slideMetric,
+    linkedinCta: `\n\nWant the direct link sent to your inbox? DM me "CALC" for the free revenue calculator or "VOICE" for the live AI voice demo link.`,
+    instagramCta: `\n\n💬 Want the direct links sent to your inbox? Send a DM with "CALC" for the free revenue calculator or "VOICE" for the live AI call agent demo, and we'll message them right over!`,
+    slideHeadline: 'Want The Free Calculator or Voice Demo?',
+    slideBody: 'Send us a direct message with "CALC" or "VOICE" and we will send the direct link straight to your inbox.',
+    slideActionText: 'DM "CALC" OR "VOICE" 💬',
+    slideMetric: {
+      value: 'DM "CALC"',
+      label: 'Direct Link to Your Inbox',
+    },
   };
 }
 
@@ -228,19 +234,26 @@ export async function generateSingleCampaign(params: GenerateCampaignParams = {}
 
   const ctaSpec = getCtaCopy(ctaType, Math.floor(Math.random() * 4), strategy.demoPhoneNumber);
 
-  const ctaGuidance = ctaType === 'calculator'
-    ? `MANDATORY CALL TO ACTION: Direct the reader to the Revenue-Loss Calculator.
-Exact URL to include: ${CALCULATOR_URL}
-Required wording angle: ${ctaSpec.slideBody}
-The final Slide 7 MUST feature this calculator URL legibly, and the captions MUST include the clickable URL.`
-    : ctaType === 'dm_calculator'
-    ? `CALL TO ACTION: Direct reader to direct message for calculator.
-Required wording: "${APPROVED_ALTERNATIVE_CTAS.dm_calculator.copy}"`
-    : ctaType === 'demo_cta'
-    ? `CALL TO ACTION: Direct reader to test the live voice agent.
-Required wording: "${APPROVED_ALTERNATIVE_CTAS.demo_cta.copy}"`
-    : `CALL TO ACTION: Invite direct conversation on missed calls.
-Required wording: "${APPROVED_ALTERNATIVE_CTAS.dm_conversation.copy}"`;
+  const normalized = normalizeCtaType(ctaType);
+  const ctaGuidance = normalized === 'bio_calculator'
+    ? `MANDATORY CALL TO ACTION: Direct the reader to tap the link in the bio for the Revenue-Loss Calculator.
+Exact wording angle: "${ctaSpec.slideBody}"
+Captions MUST instruct the reader to tap the link in the bio to run their numbers.
+Slide 7 MUST feature "LINK IN BIO" clearly as the next action.`
+    : normalized === 'bio_voice_agent'
+    ? `MANDATORY CALL TO ACTION: Direct the reader to tap the link in the bio to test the live voice agent demo.
+Exact wording angle: "${ctaSpec.slideBody}"
+Captions MUST instruct the reader to tap the link in the bio to hear the live voice agent.
+Slide 7 MUST feature "LINK IN BIO" clearly as the next action.`
+    : normalized === 'bio_hub'
+    ? `MANDATORY CALL TO ACTION: Direct the reader to tap the link in the bio to access both the revenue calculator and live voice demo.
+Exact wording angle: "${ctaSpec.slideBody}"
+Captions MUST instruct the reader to tap the link in the bio.
+Slide 7 MUST feature "LINK IN BIO" clearly as the next action.`
+    : `MANDATORY CALL TO ACTION: Direct the reader to send a DM with "CALC" for the calculator or "VOICE" for the live AI agent demo.
+Exact wording angle: "${ctaSpec.slideBody}"
+Captions MUST instruct the reader to send a direct message with "CALC" or "VOICE" for the direct link.
+Slide 7 MUST feature "DM 'CALC' OR 'VOICE'" clearly as the next action.`;
 
   const hasJoke = params.hasJoke ?? false;
 
@@ -378,7 +391,7 @@ You MUST return a JSON object with this EXACT structure:
       "bodyText": "${ctaSpec.slideBody}",
       "supportingLabel": "TAKE ACTION",
       "layoutType": "cta_action",
-      "icon": "${ctaType === 'calculator' ? 'dollar-sign' : ctaType === 'demo_cta' ? 'phone-call' : 'message-square'}",
+      "icon": "${ctaType === 'bio_calculator' ? 'dollar-sign' : ctaType === 'bio_voice_agent' ? 'phone-call' : ctaType === 'bio_hub' ? 'link' : 'message-square'}",
       "highlightMetric": { "value": "${ctaSpec.slideMetric.value}", "label": "${ctaSpec.slideMetric.label}" }
     }
   ]
@@ -413,29 +426,30 @@ You MUST return a JSON object with this EXACT structure:
   let linkedinCaption = parsedData.linkedinCaption || '';
   let instagramCaption = parsedData.instagramCaption || '';
 
-  if (ctaType === 'calculator') {
-    if (!linkedinCaption.includes(CALCULATOR_URL)) {
+  const normalizedCta = normalizeCtaType(ctaType);
+  if (normalizedCta === 'bio_calculator') {
+    if (!linkedinCaption.toLowerCase().includes('bio') && !linkedinCaption.toLowerCase().includes('calculator')) {
       linkedinCaption += ctaSpec.linkedinCta;
     }
-    if (!instagramCaption.toLowerCase().includes('bio') && !instagramCaption.toLowerCase().includes('calc')) {
+    if (!instagramCaption.toLowerCase().includes('bio')) {
       instagramCaption += ctaSpec.instagramCta;
     }
-  } else if (ctaType === 'dm_calculator') {
-    if (!linkedinCaption.toLowerCase().includes('calculator')) {
+  } else if (normalizedCta === 'bio_voice_agent') {
+    if (!linkedinCaption.toLowerCase().includes('bio') && !linkedinCaption.toLowerCase().includes('voice')) {
       linkedinCaption += ctaSpec.linkedinCta;
     }
-    if (!instagramCaption.toLowerCase().includes('calculator')) {
+    if (!instagramCaption.toLowerCase().includes('bio')) {
       instagramCaption += ctaSpec.instagramCta;
     }
-  } else if (ctaType === 'demo_cta') {
-    if (!linkedinCaption.toLowerCase().includes('demo')) {
+  } else if (normalizedCta === 'bio_hub') {
+    if (!linkedinCaption.toLowerCase().includes('bio')) {
       linkedinCaption += ctaSpec.linkedinCta;
     }
-    if (!instagramCaption.toLowerCase().includes('demo') && !instagramCaption.toLowerCase().includes('bio')) {
+    if (!instagramCaption.toLowerCase().includes('bio')) {
       instagramCaption += ctaSpec.instagramCta;
     }
   } else {
-    // dm_conversation
+    // dm_calc_or_voice
     if (!linkedinCaption.toLowerCase().includes('dm')) {
       linkedinCaption += ctaSpec.linkedinCta;
     }
@@ -461,7 +475,7 @@ You MUST return a JSON object with this EXACT structure:
       headline = ctaSpec.slideHeadline;
       bodyText = ctaSpec.slideBody;
       highlightMetric = ctaSpec.slideMetric;
-      if (ctaType === 'calculator') {
+      if (ctaType === 'bio_calculator') {
         ctaUrl = CALCULATOR_URL;
       }
     }
@@ -475,7 +489,7 @@ You MUST return a JSON object with this EXACT structure:
       bodyText: sanitizeHypeClaims(bodyText),
       supportingLabel: cleanLabel,
       layoutType: s.layoutType || (idx === 0 ? 'hook_title' : isSlide7 ? 'cta_action' : 'solution_feature'),
-      icon: s.icon || (isSlide7 ? (ctaType === 'calculator' ? 'dollar-sign' : ctaType === 'demo_cta' ? 'phone-call' : 'message-square') : 'check-circle'),
+      icon: s.icon || (isSlide7 ? (ctaType === 'bio_calculator' ? 'dollar-sign' : ctaType === 'bio_voice_agent' ? 'phone-call' : ctaType === 'bio_hub' ? 'link' : 'message-square') : 'check-circle'),
       visualInstruction: s.visualInstruction || '',
       bulletPoints: Array.isArray(s.bulletPoints) ? s.bulletPoints.map(sanitizeHypeClaims) : [],
       highlightMetric,
@@ -546,8 +560,9 @@ function sanitizeHypeClaims(text: string): string {
 }
 
 /**
- * Returns the weekly rotating schedule plan for 4 daily posts.
- * Rule: Exactly 2 Calculator CTAs + 2 Distinct Alternative CTAs (rotating DM calculator, Demo CTA, Conversation CTA)
+ * Returns the daily schedule plan for 4 daily posts.
+ * Rule: Exactly 3 posts directing to the BIO LINK (Calculator, Voice Agent, or Hub)
+ *       + Exactly 1 post directing to DM "CALC" or "VOICE" for the direct link
  */
 export function getDailyPlanForDay(dayOfWeek: number = new Date().getDay()): Array<{
   pillarId: ContentPillarId;
@@ -557,20 +572,6 @@ export function getDailyPlanForDay(dayOfWeek: number = new Date().getDay()): Arr
   slot: string;
   hasJoke: boolean;
 }> {
-  // Weekly pairing of the 2 alternative CTAs (never the same on the same day)
-  // Options: 'dm_calculator', 'demo_cta', 'dm_conversation'
-  const alternativePairs: Array<[CtaType, CtaType]> = [
-    ['dm_calculator', 'demo_cta'],       // Sunday (0)
-    ['demo_cta', 'dm_conversation'],     // Monday (1)
-    ['dm_conversation', 'dm_calculator'], // Tuesday (2)
-    ['dm_calculator', 'demo_cta'],       // Wednesday (3)
-    ['demo_cta', 'dm_conversation'],     // Thursday (4)
-    ['dm_conversation', 'dm_calculator'], // Friday (5)
-    ['dm_calculator', 'demo_cta'],       // Saturday (6)
-  ];
-
-  const [alt1, alt2] = alternativePairs[dayOfWeek % alternativePairs.length];
-
   // Rotate through 6 distinct color themes so no 2 posts in a day ever share a color
   const themeRoster: SlideTheme[] = [
     'garage-amber',
@@ -592,15 +593,15 @@ export function getDailyPlanForDay(dayOfWeek: number = new Date().getDay()): Arr
     {
       pillarId: 'missed-calls',
       buyingMotivation: 'make_money',
-      ctaType: 'calculator', // Slot 1: Calculator CTA (Missed calls & lost revenue)
+      ctaType: 'bio_calculator', // Slot 1 (08:15): Bio Link (Calculator focus)
       theme: themeSlot1,
       slot: '08:15',
-      hasJoke: true, // Post 1 includes relatable garage door humor
+      hasJoke: true, // Relatable garage door humor
     },
     {
       pillarId: 'after-hours',
       buyingMotivation: 'reduce_pain',
-      ctaType: alt1, // Slot 2: Alternative CTA #1 (Owner frustrations, after-hours calls)
+      ctaType: 'bio_voice_agent', // Slot 2 (11:45): Bio Link (Voice Agent Demo focus)
       theme: themeSlot2,
       slot: '11:45',
       hasJoke: false,
@@ -608,7 +609,7 @@ export function getDailyPlanForDay(dayOfWeek: number = new Date().getDay()): Arr
     {
       pillarId: 'lead-capture-booking',
       buyingMotivation: 'gain_time',
-      ctaType: 'calculator', // Slot 3: Calculator CTA (Time back & personal freedom)
+      ctaType: 'bio_hub', // Slot 3 (15:30): Bio Link (Full Hub: Calculator + Voice Demo)
       theme: themeSlot3,
       slot: '15:30',
       hasJoke: false,
@@ -616,21 +617,20 @@ export function getDailyPlanForDay(dayOfWeek: number = new Date().getDay()): Arr
     {
       pillarId: 'ai-agent-demo',
       buyingMotivation: 'reduce_waste',
-      ctaType: alt2, // Slot 4: Alternative CTA #2 (AI call demo & lead waste)
+      ctaType: 'dm_calc_or_voice', // Slot 4 (18:45): DM "CALC" or "VOICE" for direct link
       theme: themeSlot4,
       slot: '18:45',
-      hasJoke: true, // Post 2 includes relatable garage door humor
+      hasJoke: true, // Relatable garage door humor
     },
   ];
 }
 
 /**
  * Programmatic Validation & Auto-Enforcement of the 4 Daily Posts:
- * 1. Exactly 2 Calculator CTAs with CALCULATOR_URL
- * 2. Exactly 2 Alternative CTAs (DM or demo)
- * 3. Both alternative CTAs must be distinct on the same day
- * 4. Slide 7 must contain the assigned CTA
- * 5. Both LinkedIn and Instagram captions adapted properly
+ * 1. Exactly 3 posts directing users to the BIO LINK (Linktree / Bio hub)
+ * 2. Exactly 1 post directing users to DM "CALC" or "VOICE"
+ * 3. Slide 7 must contain the corresponding action button & metric
+ * 4. Both LinkedIn and Instagram captions adapted properly
  */
 export function validateAndEnforceDailyBatch(
   campaigns: Campaign[],
@@ -643,44 +643,18 @@ export function validateAndEnforceDailyBatch(
     issues.push(`Expected 4 campaigns for daily batch, found ${campaigns.length}.`);
   }
 
-  // Count existing calculator CTAs
-  let calculatorIndices: number[] = [];
-  let alternativeIndices: number[] = [];
-
-  campaigns.forEach((c, idx) => {
-    const isCalc =
-      c.ctaType === 'calculator' ||
-      c.platforms.linkedin.caption.includes(CALCULATOR_URL) ||
-      c.slides.some((s) => s.ctaUrl === CALCULATOR_URL || s.bodyText?.includes('caculator'));
-
-    if (isCalc) {
-      calculatorIndices.push(idx);
-    } else {
-      alternativeIndices.push(idx);
-    }
-  });
-
   const targetPlan = getDailyPlanForDay(dayOfWeek);
 
-  // Enforce rule 1 & 2: exactly 2 calculator CTAs (Slots 0 and 2) and 2 alternative CTAs (Slots 1 and 3)
+  // Enforce rule: Exactly 3 Bio Link posts (Slots 0, 1, 2) and exactly 1 DM post (Slot 3)
   const revisedCampaigns = campaigns.map((campaign, idx) => {
     const targetSlotPlan = targetPlan[idx % targetPlan.length];
     const desiredCta = targetSlotPlan.ctaType;
     const currentCta = normalizeCtaType(campaign.ctaType);
 
     let needsRevision = false;
-
-    // Check if slot type mismatches plan
-    if (desiredCta === 'calculator') {
-      if (currentCta !== 'calculator' || !campaign.platforms.linkedin.caption.includes(CALCULATOR_URL)) {
-        needsRevision = true;
-        issues.push(`Slot 0${idx + 1} (${campaign.scheduledTime}) revised to enforce Calculator CTA.`);
-      }
-    } else {
-      if (currentCta === 'calculator' || currentCta !== desiredCta) {
-        needsRevision = true;
-        issues.push(`Slot 0${idx + 1} (${campaign.scheduledTime}) revised to enforce Alternative CTA [${desiredCta}].`);
-      }
+    if (currentCta !== desiredCta) {
+      needsRevision = true;
+      issues.push(`Slot 0${idx + 1} (${campaign.scheduledTime}) revised to enforce CTA [${desiredCta}].`);
     }
 
     if (!needsRevision) {
@@ -696,8 +670,8 @@ export function validateAndEnforceDailyBatch(
           headline: ctaSpec.slideHeadline,
           bodyText: ctaSpec.slideBody,
           highlightMetric: ctaSpec.slideMetric,
-          ctaUrl: desiredCta === 'calculator' ? CALCULATOR_URL : undefined,
-          icon: desiredCta === 'calculator' ? 'dollar-sign' : desiredCta === 'demo_cta' ? 'phone-call' : 'message-square',
+          ctaUrl: desiredCta === 'bio_calculator' ? CALCULATOR_URL : undefined,
+          icon: desiredCta === 'dm_calc_or_voice' ? 'message-square' : desiredCta === 'bio_voice_agent' ? 'phone-call' : 'dollar-sign',
         };
       }
       return s;
@@ -736,26 +710,21 @@ export function validateAndEnforceDailyBatch(
     return revised;
   });
 
-  // Calculate final validation metrics
-  const finalCalcCount = revisedCampaigns.filter(
-    (c) =>
-      c.ctaType === 'calculator' &&
-      c.platforms.linkedin.caption.includes(CALCULATOR_URL) &&
-      c.platforms.instagram.caption.includes(CALCULATOR_URL) &&
-      c.slides.some((s) => s.ctaUrl === CALCULATOR_URL)
+  const bioLinkCount = revisedCampaigns.filter((c) =>
+    ['bio_calculator', 'bio_voice_agent', 'bio_hub'].includes(normalizeCtaType(c.ctaType))
   ).length;
 
-  const alternativeTypes = revisedCampaigns
-    .filter((c) => c.ctaType !== 'calculator')
-    .map((c) => normalizeCtaType(c.ctaType));
-
-  const distinctAltCount = new Set(alternativeTypes).size;
+  const dmKeywordCount = revisedCampaigns.filter((c) =>
+    normalizeCtaType(c.ctaType) === 'dm_calc_or_voice'
+  ).length;
 
   const validation: CtaBatchValidation = {
-    valid: finalCalcCount === 2 && revisedCampaigns.length === 4 && distinctAltCount === 2,
-    calculatorCount: finalCalcCount,
-    alternativeCount: revisedCampaigns.length - finalCalcCount,
-    distinctAlternativesCount: distinctAltCount,
+    valid: bioLinkCount === 3 && dmKeywordCount === 1 && revisedCampaigns.length === 4,
+    bioLinkCount,
+    dmKeywordCount,
+    calculatorCount: bioLinkCount,
+    alternativeCount: dmKeywordCount,
+    distinctAlternativesCount: 1,
     issues,
   };
 
@@ -768,6 +737,12 @@ function stripOldCtas(caption: string): string {
     .replace(/DM me CALCULATOR and I’ll send you the free garage door revenue-loss calculator\./gi, '')
     .replace(/Want to hear how an AI voice agent handles garage door calls\? Go to the link in my bio and call the demo yourself\./gi, '')
     .replace(/Interested in handling more missed calls\? DM me and let’s talk\./gi, '')
+    .replace(/Tap the link in (our|my) bio.*/gi, '')
+    .replace(/Want the direct link.*DM.*/gi, '')
+    .replace(/💬 Want the direct links.*/gi, '')
+    .replace(/📊 Want to run your numbers.*/gi, '')
+    .replace(/🎧 Curious how an AI voice agent.*/gi, '')
+    .replace(/🛠️ Stop letting high-ticket jobs slip.*/gi, '')
     .replace(/\n\s*\n\s*$/g, '')
     .trim();
 }
