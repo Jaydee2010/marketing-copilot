@@ -144,14 +144,21 @@ export function normalizeCtaType(cta?: string): 'bio_calculator' | 'bio_voice_ag
  * Returns platform-adapted caption and Slide 7 copy for a given CTA
  * Rule: 3 posts leading to bio (calculator, voice agent, or hub) + 1 post leading to DM ("CALC" or "VOICE")
  */
-export function getCtaCopy(ctaType: CtaType, rotationVariantIndex = 0, demoPhoneNumber = '(844) 385-DOOR') {
+export function getCtaCopy(
+  ctaType: CtaType,
+  rotationVariantIndex = 0,
+  demoPhoneNumber = '(844) 385-DOOR',
+  websiteUrl = 'https://stepstoneai.agency'
+) {
   const normalized = normalizeCtaType(ctaType);
 
   if (normalized === 'bio_calculator') {
     return {
       type: 'bio_calculator' as const,
       url: CALCULATOR_URL,
-      linkedinCta: `\n\nHow much revenue could missed calls be costing your garage door business? Run your own numbers with our free contractor calculator: tap the link in our bio (or visit https://garage-door-lost-revenue-caculator.vercel.app/).`,
+      // LinkedIn ONLY: Direct clickable link in post commentary!
+      linkedinCta: `\n\nHow much revenue could missed calls be costing your garage door business? Run your own numbers with our free contractor calculator right here:\n👉 ${CALCULATOR_URL}`,
+      // Instagram: Direct to link in bio (Instagram does not support clickable caption links)
       instagramCta: `\n\n📊 Want to run your numbers? Tap the link in our bio to calculate how much revenue missed calls could be costing your garage door shop!`,
       slideHeadline: 'How Much Revenue Are Missed Calls Costing You?',
       slideBody: 'Tap the link in our bio to calculate your missed repair revenue with our free interactive contractor tool.',
@@ -167,7 +174,9 @@ export function getCtaCopy(ctaType: CtaType, rotationVariantIndex = 0, demoPhone
     return {
       type: 'bio_voice_agent' as const,
       url: undefined,
-      linkedinCta: `\n\nWant to hear how an AI voice agent answers and triages garage door emergency calls 24/7? Head over to the link in our bio to listen to the live voice demo.\n(Or dial our live 24/7 contractor test line: ${demoPhoneNumber})`,
+      // LinkedIn ONLY: Direct clickable link in post commentary!
+      linkedinCta: `\n\nWant to hear how an AI voice agent answers and triages garage door emergency calls 24/7? Test the live interactive voice agent demo directly here:\n👉 ${websiteUrl}\n(Or dial our live 24/7 contractor test line: ${demoPhoneNumber})`,
+      // Instagram: Direct to link in bio
       instagramCta: `\n\n🎧 Curious how an AI voice agent answers and triages garage door emergency calls? Tap the link in our bio to test the live voice assistant demo right now!`,
       slideHeadline: 'Hear The Garage Door AI Call Handler in Action',
       slideBody: 'Tap the link in our bio to test our live AI voice agent demo and hear how it captures emergency repair jobs.',
@@ -183,7 +192,9 @@ export function getCtaCopy(ctaType: CtaType, rotationVariantIndex = 0, demoPhone
     return {
       type: 'bio_hub' as const,
       url: undefined,
-      linkedinCta: `\n\nReady to stop evening phone tag and protect high-margin repair jobs? Tap the link in our bio to access both the free revenue calculator and live AI voice triage demo.`,
+      // LinkedIn ONLY: Direct clickable links in post commentary!
+      linkedinCta: `\n\nReady to stop evening phone tag and protect high-margin repair jobs? Test both contractor tools directly below:\n📊 Free Revenue Calculator: ${CALCULATOR_URL}\n🎙️ Live AI Voice Agent Demo: ${websiteUrl}\n(Or test by phone 24/7: ${demoPhoneNumber})`,
+      // Instagram: Direct to link in bio
       instagramCta: `\n\n🛠️ Stop letting high-ticket jobs slip to competitors while you're on a ladder. Tap the link in our bio to access our free revenue calculator and live AI call agent demo!`,
       slideHeadline: 'Stop Losing Emergency Calls While On The Ladder',
       slideBody: 'Tap the link in our bio to access our free garage door revenue calculator and live AI call agent demo.',
@@ -199,7 +210,9 @@ export function getCtaCopy(ctaType: CtaType, rotationVariantIndex = 0, demoPhone
   return {
     type: 'dm_calc_or_voice' as const,
     url: undefined,
-    linkedinCta: `\n\nWant the direct link sent to your inbox? DM me "CALC" for the free revenue calculator or "VOICE" for the live AI voice demo link.`,
+    // LinkedIn: DM keyword or direct calculator link
+    linkedinCta: `\n\nWant the direct link sent to your inbox? Send me a DM with "CALC" for the free revenue calculator or "VOICE" for the live AI voice demo link—or calculate your missed revenue directly here:\n👉 ${CALCULATOR_URL}`,
+    // Instagram: DM keyword
     instagramCta: `\n\n💬 Want the direct links sent to your inbox? Send a DM with "CALC" for the free revenue calculator or "VOICE" for the live AI call agent demo, and we'll message them right over!`,
     slideHeadline: 'Want The Free Calculator or Voice Demo?',
     slideBody: 'Send us a direct message with "CALC" or "VOICE" and we will send the direct link straight to your inbox.',
@@ -232,28 +245,21 @@ export async function generateSingleCampaign(params: GenerateCampaignParams = {}
     reduce_waste: 'Discuss the cost of paying $65+ for Google LSA / SEO clicks only to miss the inbound call while driving. Show that generating leads means nothing if call handling has a leak.',
   }[buyingMotivation];
 
-  const ctaSpec = getCtaCopy(ctaType, Math.floor(Math.random() * 4), strategy.demoPhoneNumber);
+  const ctaSpec = getCtaCopy(ctaType, Math.floor(Math.random() * 4), strategy.demoPhoneNumber, strategy.websiteUrl);
 
   const normalized = normalizeCtaType(ctaType);
-  const ctaGuidance = normalized === 'bio_calculator'
-    ? `MANDATORY CALL TO ACTION: Direct the reader to tap the link in the bio for the Revenue-Loss Calculator.
-Exact wording angle: "${ctaSpec.slideBody}"
-Captions MUST instruct the reader to tap the link in the bio to run their numbers.
-Slide 7 MUST feature "LINK IN BIO" clearly as the next action.`
-    : normalized === 'bio_voice_agent'
-    ? `MANDATORY CALL TO ACTION: Direct the reader to tap the link in the bio to test the live voice agent demo.
-Exact wording angle: "${ctaSpec.slideBody}"
-Captions MUST instruct the reader to tap the link in the bio to hear the live voice agent.
-Slide 7 MUST feature "LINK IN BIO" clearly as the next action.`
-    : normalized === 'bio_hub'
-    ? `MANDATORY CALL TO ACTION: Direct the reader to tap the link in the bio to access both the revenue calculator and live voice demo.
-Exact wording angle: "${ctaSpec.slideBody}"
-Captions MUST instruct the reader to tap the link in the bio.
-Slide 7 MUST feature "LINK IN BIO" clearly as the next action.`
-    : `MANDATORY CALL TO ACTION: Direct the reader to send a DM with "CALC" for the calculator or "VOICE" for the live AI agent demo.
-Exact wording angle: "${ctaSpec.slideBody}"
-Captions MUST instruct the reader to send a direct message with "CALC" or "VOICE" for the direct link.
-Slide 7 MUST feature "DM 'CALC' OR 'VOICE'" clearly as the next action.`;
+  const ctaGuidance = `
+*** MANDATORY PLATFORM-SPECIFIC CALL TO ACTION INSTRUCTIONS ***
+1. LINKEDIN POST COMMENTARY:
+   - LinkedIn SUPPORTS direct clickable URLs inside post captions!
+   - You MUST include the DIRECT CLICKABLE URL directly in the LinkedIn post commentary:
+     ${normalized === 'bio_calculator' ? `* Direct link to calculator: ${CALCULATOR_URL}` : normalized === 'bio_voice_agent' ? `* Direct link to live AI voice demo: ${strategy.websiteUrl} (or contractor test line: ${strategy.demoPhoneNumber})` : normalized === 'bio_hub' ? `* Direct link to calculator (${CALCULATOR_URL}) and voice agent (${strategy.websiteUrl})` : `* Direct DM instruction ("CALC" or "VOICE") + direct calculator URL (${CALCULATOR_URL})`}
+   - NEVER tell LinkedIn readers to "go to bio" or "tap link in bio". Direct links work natively on LinkedIn!
+
+2. INSTAGRAM CAPTION:
+   - Instagram does NOT support clickable links in post captions.
+   - For Instagram, ALWAYS instruct readers to ${normalized === 'dm_calc_or_voice' ? 'send a DM with "CALC" or "VOICE"' : 'tap the link in our bio'}!
+   - Slide 7 MUST clearly feature ${normalized === 'dm_calc_or_voice' ? '"DM \'CALC\' OR \'VOICE\'"' : '"LINK IN BIO"'} as the action step.`;
 
   const hasJoke = params.hasJoke ?? false;
 
@@ -427,22 +433,27 @@ You MUST return a JSON object with this EXACT structure:
   let instagramCaption = parsedData.instagramCaption || '';
 
   const normalizedCta = normalizeCtaType(ctaType);
+  // Clean up any accidental "link in bio" mentions in LinkedIn copy
+  linkedinCaption = linkedinCaption
+    .replace(/(head over to|tap|check|go to) the link in (our|my) bio/gi, 'check the direct link below')
+    .replace(/link in (our|my) bio/gi, 'link below');
+
   if (normalizedCta === 'bio_calculator') {
-    if (!linkedinCaption.toLowerCase().includes('bio') && !linkedinCaption.toLowerCase().includes('calculator')) {
+    if (!linkedinCaption.includes(CALCULATOR_URL)) {
       linkedinCaption += ctaSpec.linkedinCta;
     }
     if (!instagramCaption.toLowerCase().includes('bio')) {
       instagramCaption += ctaSpec.instagramCta;
     }
   } else if (normalizedCta === 'bio_voice_agent') {
-    if (!linkedinCaption.toLowerCase().includes('bio') && !linkedinCaption.toLowerCase().includes('voice')) {
+    if (!linkedinCaption.includes('stepstoneai.agency') && !linkedinCaption.includes(strategy.demoPhoneNumber)) {
       linkedinCaption += ctaSpec.linkedinCta;
     }
     if (!instagramCaption.toLowerCase().includes('bio')) {
       instagramCaption += ctaSpec.instagramCta;
     }
   } else if (normalizedCta === 'bio_hub') {
-    if (!linkedinCaption.toLowerCase().includes('bio')) {
+    if (!linkedinCaption.includes(CALCULATOR_URL)) {
       linkedinCaption += ctaSpec.linkedinCta;
     }
     if (!instagramCaption.toLowerCase().includes('bio')) {
@@ -450,7 +461,7 @@ You MUST return a JSON object with this EXACT structure:
     }
   } else {
     // dm_calc_or_voice
-    if (!linkedinCaption.toLowerCase().includes('dm')) {
+    if (!linkedinCaption.toLowerCase().includes('dm') && !linkedinCaption.includes(CALCULATOR_URL)) {
       linkedinCaption += ctaSpec.linkedinCta;
     }
     if (!instagramCaption.toLowerCase().includes('dm')) {
@@ -657,12 +668,20 @@ export function validateAndEnforceDailyBatch(
       issues.push(`Slot 0${idx + 1} (${campaign.scheduledTime}) revised to enforce CTA [${desiredCta}].`);
     }
 
-    if (!needsRevision) {
+    const ctaSpec = getCtaCopy(desiredCta, idx, strategy.demoPhoneNumber, strategy.websiteUrl);
+    const liNeedsLink = desiredCta === 'bio_calculator' || desiredCta === 'dm_calc_or_voice'
+      ? !campaign.platforms.linkedin.caption.includes(CALCULATOR_URL)
+      : desiredCta === 'bio_voice_agent'
+      ? !campaign.platforms.linkedin.caption.includes('stepstoneai.agency') && !campaign.platforms.linkedin.caption.includes(strategy.demoPhoneNumber)
+      : !campaign.platforms.linkedin.caption.includes(CALCULATOR_URL);
+
+    const liHasBioWord = /link in (our|my) bio/i.test(campaign.platforms.linkedin.caption);
+
+    if (!needsRevision && !liNeedsLink && !liHasBioWord) {
       return campaign;
     }
 
     // Auto-revise the campaign
-    const ctaSpec = getCtaCopy(desiredCta, idx, strategy.demoPhoneNumber);
     const updatedSlides = campaign.slides.map((s, sIdx) => {
       if (sIdx === 6 || s.slideNumber === 7) {
         return {
@@ -680,7 +699,7 @@ export function validateAndEnforceDailyBatch(
     let updatedLiCaption = campaign.platforms.linkedin.caption;
     let updatedIgCaption = campaign.platforms.instagram.caption;
 
-    // Strip old CTA links/texts if any
+    // Strip old CTA links/texts
     updatedLiCaption = stripOldCtas(updatedLiCaption);
     updatedIgCaption = stripOldCtas(updatedIgCaption);
 
@@ -734,15 +753,20 @@ export function validateAndEnforceDailyBatch(
 function stripOldCtas(caption: string): string {
   return caption
     .replace(/https:\/\/garage-door-lost-revenue-caculator\.vercel\.app\/?/gi, '')
+    .replace(/https:\/\/stepstoneai\.agency\/?/gi, '')
     .replace(/DM me CALCULATOR and I’ll send you the free garage door revenue-loss calculator\./gi, '')
     .replace(/Want to hear how an AI voice agent handles garage door calls\? Go to the link in my bio and call the demo yourself\./gi, '')
     .replace(/Interested in handling more missed calls\? DM me and let’s talk\./gi, '')
-    .replace(/Tap the link in (our|my) bio.*/gi, '')
+    .replace(/(head over to|tap|check|go to) the link in (our|my) bio.*/gi, '')
+    .replace(/link in (our|my) bio.*/gi, '')
     .replace(/Want the direct link.*DM.*/gi, '')
     .replace(/💬 Want the direct links.*/gi, '')
     .replace(/📊 Want to run your numbers.*/gi, '')
     .replace(/🎧 Curious how an AI voice agent.*/gi, '')
     .replace(/🛠️ Stop letting high-ticket jobs slip.*/gi, '')
+    .replace(/How much revenue could missed calls be costing.*Run your own numbers.*/gi, '')
+    .replace(/Ready to stop evening phone tag.*Test both contractor tools.*/gi, '')
+    .replace(/Want to hear how an AI voice agent answers and triages.*/gi, '')
     .replace(/\n\s*\n\s*$/g, '')
     .trim();
 }

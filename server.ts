@@ -7,7 +7,7 @@ import { db } from './server/db';
 import { scheduler } from './server/scheduler';
 import { generateSingleCampaign, generateDailyBatch, validateAndEnforceDailyBatch } from './server/gemini';
 import { renderCampaignSlides } from './server/renderer';
-import { publishToLinkedIn, getLinkedInAuthUrl, exchangeLinkedInCode } from './server/linkedin';
+import { publishToLinkedIn, getLinkedInAuthUrl, exchangeLinkedInCode, verifyLinkedInCredentials } from './server/linkedin';
 import { publishToInstagram, verifyInstagramCredentials } from './server/instagram';
 
 dotenv.config();
@@ -224,25 +224,41 @@ app.post('/api/emergency-pause', (req, res) => {
 // Integrations: LinkedIn
 app.get('/api/integrations/linkedin', (req, res) => {
   const creds = db.getLinkedIn();
-  // Never expose raw clientSecret to frontend
+  // Never expose raw secrets/tokens to frontend
   res.json({
     ...creds,
     clientSecret: creds.clientSecret ? '••••••••••••' : '',
+    accessToken: creds.accessToken ? '••••••••••••' : '',
   });
 });
 
 app.put('/api/integrations/linkedin', (req, res) => {
   const current = db.getLinkedIn();
   const updateData = { ...req.body };
-  // Preserve secret if user didn't change masked string
+  // Preserve secrets if user didn't change masked string
   if (updateData.clientSecret === '••••••••••••') {
     updateData.clientSecret = current.clientSecret;
+  }
+  if (updateData.accessToken === '••••••••••••') {
+    updateData.accessToken = current.accessToken;
   }
   const updated = db.saveLinkedIn(updateData);
   res.json({
     ...updated,
     clientSecret: updated.clientSecret ? '••••••••••••' : '',
+    accessToken: updated.accessToken ? '••••••••••••' : '',
   });
+});
+
+app.post('/api/integrations/linkedin/verify', async (req, res) => {
+  try {
+    const creds = db.getLinkedIn();
+    const result = await verifyLinkedInCredentials(creds);
+    res.json(result);
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ success: false, error: msg });
+  }
 });
 
 // LinkedIn OAuth Redirect Flow
@@ -601,13 +617,26 @@ app.get('/api/campaigns/:id/download-zip', async (req, res) => {
     const campaign = db.getCampaign(req.params.id);
     if (!campaign) return res.status(404).json({ error: 'Campaign not found' });
 
-    if (!campaign.renderedAssets || campaign.renderedAssets.length < 7) {
-      await renderCampaignSlides(campaign.id, 'portrait_4_5');
+    let assets = campaign.renderedAssets;
+    if (!assets || assets.length < 7) {
+      assets = await renderCampaignSlides(campaign.id, 'portrait_4_5');
+    }
+
+    // Verify all 7 files physically exist on disk
+    let needsReRender = false;
+    for (const a of assets) {
+      const p = path.join(ASSETS_DIR, a.filename || `${campaign.id}_slide_${a.slideIndex}_portrait_4_5.png`);
+      if (!fs.existsSync(p)) {
+        needsReRender = true;
+        break;
+      }
+    }
+
+    if (needsReRender) {
+      assets = await renderCampaignSlides(campaign.id, 'portrait_4_5');
     }
 
     const zip = new JSZip();
-    const assets = campaign.renderedAssets;
-
     for (let i = 0; i < assets.length; i++) {
       const asset = assets[i];
       const filePath = path.join(ASSETS_DIR, asset.filename);
@@ -617,9 +646,15 @@ app.get('/api/campaigns/:id/download-zip', async (req, res) => {
       }
     }
 
-    const zipBuffer = await zip.generateAsync({ type: 'nodebuffer' });
+    const zipBuffer = await zip.generateAsync({
+      type: 'nodebuffer',
+      compression: 'DEFLATE',
+      compressionOptions: { level: 6 },
+    });
+
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', `attachment; filename="${campaign.id}-7slides.zip"`);
+    res.setHeader('Content-Length', zipBuffer.length.toString());
     res.send(zipBuffer);
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);

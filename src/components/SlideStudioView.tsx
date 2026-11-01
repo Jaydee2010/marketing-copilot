@@ -43,6 +43,7 @@ export const SlideStudioView: React.FC<SlideStudioViewProps> = ({
   const [previewFormat, setPreviewFormat] = useState<SlideFormat>('portrait_4_5');
   const [activePlatformTab, setActivePlatformTab] = useState<'linkedin' | 'instagram'>('linkedin');
   const [saving, setSaving] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [localCampaign, setLocalCampaign] = useState<Campaign | null>(campaign);
 
   // Sync state when campaign changes
@@ -50,6 +51,31 @@ export const SlideStudioView: React.FC<SlideStudioViewProps> = ({
     setLocalCampaign(campaign);
     setActiveSlideIndex(0);
   }, [campaign]);
+
+  const handleDownloadZip = async () => {
+    if (!localCampaign) return;
+    try {
+      setDownloading(true);
+      const res = await fetch(`/api/campaigns/${localCampaign.id}/download-zip`);
+      if (!res.ok) {
+        throw new Error(`Download failed with status ${res.status}`);
+      }
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${localCampaign.id}-7slides.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err: any) {
+      console.error('Download error:', err);
+      window.location.href = `/api/campaigns/${localCampaign.id}/download-zip`;
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   if (!localCampaign) {
     return (
@@ -225,13 +251,19 @@ export const SlideStudioView: React.FC<SlideStudioViewProps> = ({
           </button>
 
           {/* Download ZIP */}
-          <a
-            href={`/api/campaigns/${localCampaign.id}/download-zip`}
-            className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-all"
+          <button
+            onClick={handleDownloadZip}
+            disabled={downloading || loading}
+            className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50"
+            title="Download all 7 rendered slides in a single ZIP file"
           >
-            <Download className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Download ZIP</span>
-          </a>
+            {downloading ? (
+              <RefreshCw className="w-3.5 h-3.5 text-emerald-400 animate-spin" />
+            ) : (
+              <Download className="w-3.5 h-3.5 text-emerald-400" />
+            )}
+            <span>{downloading ? 'Preparing ZIP...' : 'Download ZIP'}</span>
+          </button>
 
           {/* Save Changes */}
           <button

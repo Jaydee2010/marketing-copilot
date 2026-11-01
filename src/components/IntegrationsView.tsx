@@ -38,6 +38,8 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({
   const [savingLI, setSavingLI] = useState(false);
   const [savingIG, setSavingIG] = useState(false);
   const [verifyingIG, setVerifyingIG] = useState(false);
+  const [verifyingLI, setVerifyingLI] = useState(false);
+  const [showAdvancedLI, setShowAdvancedLI] = useState(false);
   const [igFeedback, setIgFeedback] = useState<{
     type: 'success' | 'error' | 'info';
     message: string;
@@ -75,6 +77,50 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({
       });
     } finally {
       setSavingLI(false);
+    }
+  };
+
+  const handleVerifyLinkedIn = async () => {
+    try {
+      setVerifyingLI(true);
+      setLiFeedback(null);
+
+      // Save credentials first
+      await onUpdateLinkedIn(localLI);
+
+      const res = await fetch('/api/integrations/linkedin/verify', { method: 'POST' });
+      const data = await res.json();
+
+      if (data.success && data.isConnected) {
+        const updatedCreds: LinkedInCredentials = {
+          ...localLI,
+          isConnected: true,
+          isTestMode: false,
+          memberName: data.memberName,
+          memberUrn: data.memberUrn,
+          lastVerifiedAt: new Date().toISOString(),
+        };
+        setLocalLI(updatedCreds);
+        await onUpdateLinkedIn(updatedCreds);
+        setLiFeedback({
+          type: 'success',
+          message: `Connection successful! Verified as ${data.memberName} (${data.memberUrn}). Official LinkedIn API publishing is active.`,
+        });
+      } else {
+        setLocalLI({ ...localLI, isConnected: false });
+        setLiFeedback({
+          type: 'error',
+          message: data.error || 'LinkedIn API verification failed.',
+          details: data.details || 'Check your client credentials, product access ("Share on LinkedIn"), and scopes.',
+        });
+      }
+    } catch (err: any) {
+      setLiFeedback({
+        type: 'error',
+        message: `Error connecting to server: ${err.message}`,
+      });
+    } finally {
+      setVerifyingLI(false);
     }
   };
 
@@ -305,6 +351,30 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({
               </div>
             </div>
 
+            {/* Live Connection Banner or Instructions */}
+            {localLI.isConnected ? (
+              <div className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-800/40 text-xs text-emerald-300 flex items-start gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <div className="font-bold text-white">Live LinkedIn Multi-Image API Publishing Active</div>
+                  <p className="text-[11px] text-emerald-200/80 leading-relaxed">
+                    Authorized as <strong className="text-white">{localLI.memberName || 'LinkedIn Member'}</strong>{' '}
+                    ({localLI.memberUrn || 'Personal Profile'}). 7-slide image carousels are ready to publish directly to your feed.
+                  </p>
+                </div>
+              </div>
+            ) : !localLI.isTestMode ? (
+              <div className="p-3.5 rounded-xl bg-amber-950/30 border border-amber-800/40 text-xs text-amber-300 flex items-start gap-2.5">
+                <Radio className="w-4 h-4 text-amber-400 shrink-0 mt-0.5 animate-pulse" />
+                <div className="space-y-1">
+                  <div className="font-bold text-white">Step to Start Publishing: Connect or Verify LinkedIn</div>
+                  <p className="text-[11px] text-amber-200/80 leading-relaxed">
+                    Click <strong className="text-white">"Connect via OAuth"</strong> to authenticate your LinkedIn account, or test your credentials with <strong className="text-white">"Verify LinkedIn"</strong>.
+                  </p>
+                </div>
+              </div>
+            ) : null}
+
             {/* LinkedIn Feedback Message Banner */}
             {liFeedback && (
               <div
@@ -388,6 +458,54 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({
                   Authorized as: <span className="font-bold text-white">{localLI.memberName}</span> ({localLI.memberUrn})
                 </div>
               )}
+
+              {/* Advanced / Direct Token toggle */}
+              <button
+                type="button"
+                onClick={() => setShowAdvancedLI(!showAdvancedLI)}
+                className="text-[11px] text-blue-400 hover:text-blue-300 font-semibold flex items-center gap-1 cursor-pointer pt-1"
+              >
+                <span>{showAdvancedLI ? '▼ Hide Direct Token & Author URN' : '▶ Direct Token & Author URN (Optional)'}</span>
+              </button>
+
+              {showAdvancedLI && (
+                <div className="space-y-3 p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs animate-in fade-in">
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-300">Direct Access Token (Optional)</label>
+                    <input
+                      type="password"
+                      value={localLI.accessToken || ''}
+                      onChange={(e) => setLocalLI({ ...localLI, accessToken: e.target.value })}
+                      placeholder="Paste LinkedIn OAuth token directly"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:outline-none focus:border-blue-500 font-mono"
+                    />
+                    <span className="text-[10px] text-slate-500">
+                      If you already generated a member or organization token in LinkedIn Developer Portal.
+                    </span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-300">Author URN (Optional)</label>
+                    <input
+                      type="text"
+                      value={localLI.organizationUrn || localLI.memberUrn || ''}
+                      onChange={(e) => {
+                        const val = e.target.value.trim();
+                        if (val.startsWith('urn:li:organization:') || val.includes('organization')) {
+                          setLocalLI({ ...localLI, organizationUrn: val });
+                        } else {
+                          setLocalLI({ ...localLI, memberUrn: val, organizationUrn: undefined });
+                        }
+                      }}
+                      placeholder="e.g. urn:li:person:abcdef or urn:li:organization:123456"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:outline-none focus:border-blue-500 font-mono"
+                    />
+                    <span className="text-[10px] text-slate-500">
+                      Use personal member URN or organization page URN for business posting.
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Official API Checklist */}
@@ -413,23 +531,34 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({
           </div>
 
           {/* Action buttons */}
-          <div className="pt-4 border-t border-slate-800 flex items-center justify-between gap-3">
-            <button
-              onClick={handleConnectLinkedIn}
-              disabled={!localLI.clientId || localLI.isTestMode}
-              className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white font-bold text-xs flex items-center gap-1.5 transition-all"
-            >
-              <Key className="w-3.5 h-3.5" />
-              <span>Connect via OAuth</span>
-            </button>
+          <div className="pt-4 border-t border-slate-800 flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleConnectLinkedIn}
+                disabled={!localLI.clientId || localLI.isTestMode}
+                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
+              >
+                <Key className="w-3.5 h-3.5" />
+                <span>Connect via OAuth</span>
+              </button>
+
+              <button
+                onClick={handleVerifyLinkedIn}
+                disabled={verifyingLI || (!localLI.accessToken && !localLI.clientId)}
+                className="px-3.5 py-2 rounded-xl bg-blue-950/60 hover:bg-blue-900 border border-blue-800/80 text-blue-200 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-40"
+              >
+                {verifyingLI ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Radio className="w-3.5 h-3.5" />}
+                <span>Verify LinkedIn</span>
+              </button>
+            </div>
 
             <button
               onClick={handleSaveLinkedIn}
               disabled={savingLI || loading}
-              className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center gap-1.5 transition-all"
+              className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
             >
               {savingLI ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-              <span>Save LinkedIn Settings</span>
+              <span>Save Settings</span>
             </button>
           </div>
         </div>

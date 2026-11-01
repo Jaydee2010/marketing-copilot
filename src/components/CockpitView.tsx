@@ -52,6 +52,31 @@ export const CockpitView: React.FC<CockpitViewProps> = ({
   loadingAction,
 }) => {
   const [activePublishingId, setActivePublishingId] = useState<string | null>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+
+  const handleDownloadZip = async (campaignId: string, title?: string) => {
+    try {
+      setDownloadingId(campaignId);
+      const res = await fetch(`/api/campaigns/${campaignId}/download-zip`);
+      if (!res.ok) {
+        throw new Error(`Download failed with status ${res.status}`);
+      }
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${campaignId}-7slides.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err: any) {
+      console.error('Download error:', err);
+      window.location.href = `/api/campaigns/${campaignId}/download-zip`;
+    } finally {
+      setDownloadingId(null);
+    }
+  };
 
   const isAutoEnabled = status?.autoPublishEnabled || false;
   const isGlobalPaused = status?.globalPaused || false;
@@ -458,14 +483,19 @@ export const CockpitView: React.FC<CockpitViewProps> = ({
                   </button>
 
                   {/* Download ZIP */}
-                  <a
-                    href={`/api/campaigns/${campaign.id}/download-zip`}
-                    className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-all"
+                  <button
+                    onClick={() => handleDownloadZip(campaign.id, campaign.title)}
+                    disabled={downloadingId === campaign.id || loadingAction}
+                    className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50"
                     title="Download all 7 slides in a single ZIP file"
                   >
-                    <Download className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>ZIP</span>
-                  </a>
+                    {downloadingId === campaign.id ? (
+                      <RefreshCw className="w-3.5 h-3.5 text-emerald-400 animate-spin" />
+                    ) : (
+                      <Download className="w-3.5 h-3.5 text-emerald-400" />
+                    )}
+                    <span>{downloadingId === campaign.id ? 'Zipping...' : 'ZIP'}</span>
+                  </button>
 
                   {/* Publish Now Button Dropdown/Actions */}
                   <div className="flex items-center gap-1">

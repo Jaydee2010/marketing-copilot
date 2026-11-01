@@ -347,7 +347,7 @@
       "scheduledTime": "08:15",
       "isDemo": true,
       "createdAt": "2026-10-21T03:44:15.539Z",
-      "updatedAt": "2026-10-30T02:33:30.695Z",
+      "updatedAt": "2026-10-30T16:36:31.994Z",
       "platforms": {
         "linkedin": {
           "enabled": true,
@@ -359,8 +359,9 @@
             "#SmallBusinessOperations"
           ],
           "format": "portrait_4_5",
-          "status": "draft",
-          "retryCount": 0
+          "status": "failed",
+          "retryCount": 0,
+          "lastError": "Cannot publish: Missing LinkedIn Access Token or Member URN. Please connect your LinkedIn account in Integrations."
         },
         "instagram": {
           "enabled": true,
@@ -1187,6 +1188,16 @@
     }
   ],
   "logs": [
+    {
+      "campaignId": "camp-demo-01",
+      "campaignTitle": "Dave Was Halfway Through a Spring Replacement When His Phone Rang",
+      "platform": "linkedin",
+      "action": "publish_attempt",
+      "status": "failed",
+      "message": "Cannot publish: Missing LinkedIn Access Token or Member URN. Please connect your LinkedIn account in Integrations.",
+      "id": "log-1793378191995-eoz5c",
+      "timestamp": "2026-10-30T16:36:31.995Z"
+    },
     {
       "campaignId": "camp-demo-02",
       "campaignTitle": "It’s 11:07 P.M. A Homeowner’s Garage Door Won’t Close.",
